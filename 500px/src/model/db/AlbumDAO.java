@@ -1,4 +1,4 @@
-package dao;
+package model.db;
 
 public class AlbumDAO {
 
