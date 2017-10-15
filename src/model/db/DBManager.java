@@ -21,7 +21,6 @@ public class DBManager {
 		final String DB_USER = "root";
 		final String DB_PASS = "vessy";
 
-		Connection connection = null;
 		try {
 			connection = DriverManager.getConnection("jdbc:mysql://" + DB_IP + ":" + DB_PORT + "/" + DB_DBNAME, DB_USER,
 					DB_PASS);

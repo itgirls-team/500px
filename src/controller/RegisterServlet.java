@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import model.db.DBManager;
 import model.db.UserDao;
 
 @WebServlet("/register")
@@ -20,8 +22,22 @@ public class RegisterServlet extends HttpServlet {
 	private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern
 			.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 	private static final Pattern VALID_USERNAME = Pattern.compile("^[a-zA-Z0-9._-]{3,}$", Pattern.CASE_INSENSITIVE);
-
 	private static final String REG_SUCC_MSG = "Registration successful";
+	private Connection connection;
+
+	@Override
+	public void init() throws ServletException {
+		// open connections
+		super.init();
+		connection = DBManager.getInstance().getConnection();
+	}
+
+	@Override
+	public void destroy() {
+		// close connections
+		super.destroy();
+		DBManager.getInstance().closeConnection();
+	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -37,10 +53,17 @@ public class RegisterServlet extends HttpServlet {
 		// Registration of user
 		if (validationMessage.equals(REG_SUCC_MSG)) {
 			// TODO add profile picture
-			UserDao.getInstance().insertUser(userName, password, email, firstName, lastName, description, "image.jpg");
-			response.getWriter().append("You have registered successfully");
+			try {
+				UserDao.getInstance(connection).insertUser(userName, password, email, firstName, lastName, description,
+						"image.jpg");
+			} catch (SQLException e) {
+				System.out.println("Problem with the database. Could not execute query!");
+				response.getWriter().append("Problem with the database. Could not execute query!");
+				return;
+			}
+			response.getWriter().append("You have registered successfully. Please login with your account!");
+
 		} else {
-			// response.sendRedirect("register.html");
 			response.getWriter().append(validationMessage);
 		}
 	}
@@ -87,7 +110,7 @@ public class RegisterServlet extends HttpServlet {
 			return "Invalid Last name!";
 		}
 		try {
-			if (UserDao.getInstance().existUser(userName)) {
+			if (UserDao.getInstance(connection).existUser(userName)) {
 				return "This username already exists!";
 			}
 		} catch (SQLException e) {

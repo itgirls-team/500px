@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 public class User {
@@ -27,6 +28,8 @@ public class User {
 		this.email = email;
 		this.description = description;
 		this.profilePicture = profilePicture;
+		followers = new HashSet<>();
+		following = new HashSet<>();
 	}
 
 	public User(long id, String userName, String firstName, String lastName, String password, String email,
@@ -88,4 +91,31 @@ public class User {
 		return id;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (id != other.id)
+			return false;
+		if (userName == null) {
+			if (other.userName != null)
+				return false;
+		} else if (!userName.equals(other.userName))
+			return false;
+		return true;
+	}
 }
