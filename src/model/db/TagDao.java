@@ -7,14 +7,14 @@ import java.sql.Statement;
 
 import model.Tag;
 
-public class TagDAO {
+public class TagDao {
 
-	private static TagDAO instance;
-	private TagDAO(){}
+	private static TagDao instance;
+	private TagDao(){}
 	
-	public static synchronized TagDAO getInstance(){
+	public static synchronized TagDao getInstance(){
 		if(instance == null){
-			instance = new TagDAO();
+			instance = new TagDao();
 		}
 		return instance;
 	}

@@ -8,21 +8,21 @@ import java.sql.Statement;
 
 import model.Post;
 
-public class PostDAO {
+public class PostDao {
 
-	private static PostDAO instance;
-	private PostDAO(){}
+	private static PostDao instance;
+	private PostDao(){}
 	
-	public static synchronized PostDAO getInstance(){
+	public static synchronized PostDao getInstance(){
 		if(instance == null){
-			instance = new PostDAO();
+			instance = new PostDao();
 		}
 		return instance;
 	}
 	
 	//insertPostInDB
 	public void insertPost(Post p) throws SQLException {
-		Connection con = DBManager.getInstance().getConnection();
+		Connection con = DbManager.getInstance().getConnection();
 		PreparedStatement ps = con.prepareStatement(
 				"INSERT into posts (image, counts_like, counts_dislike, date_upload, description, album_id) VALUES(?,?,?,?,?,?);",
 				Statement.RETURN_GENERATED_KEYS);

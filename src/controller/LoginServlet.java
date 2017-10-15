@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import model.db.DBManager;
+import model.db.DbManager;
 import model.db.UserDao;
 
 @WebServlet("/login")
@@ -22,14 +22,14 @@ public class LoginServlet extends HttpServlet {
 	public void init() throws ServletException {
 		// open connections
 		super.init();
-		connection = DBManager.getInstance().getConnection();
+		connection = DbManager.getInstance().getConnection();
 	}
 
 	@Override
 	public void destroy() {
 		// close connections
 		super.destroy();
-		DBManager.getInstance().closeConnection();
+		DbManager.getInstance().closeConnection();
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

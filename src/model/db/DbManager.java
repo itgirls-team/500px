@@ -4,12 +4,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DBManager {
+public class DbManager {
 
-	private static DBManager instance;
+	private static DbManager instance;
 	private Connection connection;
 
-	public DBManager() {
+	public DbManager() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
@@ -30,9 +30,9 @@ public class DBManager {
 		}
 	}
 
-	public synchronized static DBManager getInstance() {
+	public synchronized static DbManager getInstance() {
 		if (instance == null) {
-			instance = new DBManager();
+			instance = new DbManager();
 		}
 		return instance;
 	}
