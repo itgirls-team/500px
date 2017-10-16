@@ -39,6 +39,14 @@ public class User {
 		this.registerDate = registerDate;
 	}
 
+	public User(String userName, String description, String profilePicture) {
+		this.userName = userName;
+		this.description = description;
+		this.profilePicture = profilePicture;
+		followers = new HashSet<>();
+		following = new HashSet<>();
+	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
