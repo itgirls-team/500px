@@ -5,11 +5,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import model.User;
 
@@ -30,8 +29,8 @@ public class UserDao {
 		return instance;
 	}
 
-	public void insertUser(String userName, String password, String email, String firstName, String lastName,
-			String description, String pictureName) throws SQLException {
+	public synchronized void insertUser(String userName, String password, String email, String firstName,
+			String lastName, String description, String pictureName) throws SQLException {
 		PreparedStatement ps = null;
 		ps = connection.prepareStatement(
 				"INSERT INTO users (first_name,last_name,email,username,password,register_date,profile_picture,description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -50,7 +49,7 @@ public class UserDao {
 		}
 	}
 
-	public boolean existUser(String userName) throws SQLException {
+	public synchronized boolean existUser(String userName) throws SQLException {
 		PreparedStatement ps = null;
 		boolean userExists = true;
 
@@ -67,10 +66,9 @@ public class UserDao {
 		return userExists;
 	}
 
-	public void deleteUser(String username) throws SQLException {
-		PreparedStatement ps = null;
+	public synchronized void deleteUser(String username) throws SQLException {
 
-		ps = connection.prepareStatement("DELETE FROM users WHERE username=?;");
+		PreparedStatement ps = connection.prepareStatement("DELETE FROM users WHERE username=?;");
 		ps.setString(1, username);
 		ps.executeUpdate();
 
@@ -80,20 +78,24 @@ public class UserDao {
 
 	}
 
-	public User getUser(String username) throws SQLException {
-		// TODO implement
-		// make userDto
+	public synchronized User getUser(String username) throws SQLException {
 		User user = null;
 		if (existUser(username)) {
-			PreparedStatement ps = null;
-			ps = connection
-					.prepareStatement("SELECT username,description,profile_picture FROM users WHERE username=?;");
+			PreparedStatement ps = connection.prepareStatement(
+					"SELECT first_name,last_name,email,username,register_date,profile_picture,description FROM users WHERE username=?;");
 			ps.setString(1, username);
 			ResultSet rs = ps.executeQuery();
 
-			if (rs.next()) {
-				user = new User(rs.getString("username"), rs.getString("description"), rs.getString("profile_picture"));
-			}
+			rs.next();
+			user = new User(rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"),
+					rs.getString("username"), rs.getDate("register_date").toLocalDate(),
+					rs.getString("profile_picture"), rs.getString("description"));
+
+			// TODO add getAlbumForUser
+			// HashSet<Album> albumsOfUser =
+			// AlbumDao.getInstance().getAlbumForUser(user);
+			// user.setAlbumsOfUser(albumsOfUser);
+
 			if (ps != null) {
 				ps.close();
 			}
@@ -101,29 +103,85 @@ public class UserDao {
 		return user;
 	}
 
-	public void getAllFollowersFromDB() throws SQLException {
-		// retrieve all users
-		Set<User> allFollowers = new HashSet();
-		String selectAllFollowersFromDB = "SELECT user_id, follower_id FROM user_follower WHERE ;";
-		Statement statement = null;
-		ResultSet result = null;
+	public synchronized Set<User> getAllFollowersForUser(String username) throws SQLException {
 
-		statement = DbManager.getInstance().getConnection().createStatement();
-		result = statement.executeQuery(selectAllFollowersFromDB);
-		while (result.next()) {
-			if (!(allFollowers.containsKey(result.getString("follower_email")))) {
-				allFollowers.put(result.getString("follower_email"), new CopyOnWriteArrayList<>());
+		Set<User> allFollowers = new HashSet();
+
+		PreparedStatement ps = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
+		ps.setString(1, username);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		Long userId = rs.getLong(1);
+
+		String selectAllFollowersFromDB = "SELECT follower_id FROM user_follower WHERE user_id=?;";
+
+		PreparedStatement psOne = connection.prepareStatement(selectAllFollowersFromDB);
+		psOne.setLong(1, userId);
+		ResultSet rsOne = psOne.executeQuery();
+		while (rsOne.next()) {
+			Long followerId = rsOne.getLong("follower_id");
+
+			PreparedStatement psTwo = connection.prepareStatement("SELECT username FROM users WHERE user_id=?;");
+			psTwo.setLong(1, followerId);
+			ResultSet rsTwo = psTwo.executeQuery();
+			rsTwo.next();
+			String usernameOfFollower = rsTwo.getString(1);
+
+			allFollowers.add(getUser(usernameOfFollower));
+			if (psTwo != null) {
+				psTwo.close();
 			}
-			allFollowers.get(result.getString("follower_email")).add(result.getString("followed_email"));
 		}
+		if (ps != null) {
+			ps.close();
+		}
+		if (psOne != null) {
+			psOne.close();
+		}
+
 		return allFollowers;
 	}
 
-	public void getFollowed() {
+	public synchronized Set<User> getAllFollowedForUser(String followerUsername) throws SQLException {
 
+		Set<User> allFollowed = new HashSet();
+		// take id of the follower
+		PreparedStatement ps = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
+		ps.setString(1, followerUsername);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		Long followerId = rs.getLong(1);
+
+		String selectAllFollowedFromDB = "SELECT user_id FROM user_follower WHERE follower_id=?;";
+
+		PreparedStatement psOne = connection.prepareStatement(selectAllFollowedFromDB);
+		psOne.setLong(1, followerId);
+		ResultSet rsOne = psOne.executeQuery();
+		while (rsOne.next()) {
+			Long followedUserId = rsOne.getLong("user_id");
+
+			PreparedStatement psTwo = connection.prepareStatement("SELECT username FROM users WHERE user_id=?;");
+			psTwo.setLong(1, followedUserId);
+			ResultSet rsTwo = psTwo.executeQuery();
+			rsTwo.next();
+			String usernameOfFollowed = rsTwo.getString(1);
+
+			allFollowed.add(getUser(usernameOfFollowed));
+			if (psTwo != null) {
+				psTwo.close();
+			}
+		}
+		if (ps != null) {
+			ps.close();
+		}
+		if (psOne != null) {
+			psOne.close();
+		}
+
+		return allFollowed;
 	}
 
-	public void addToFollowedUsers(User user, User follower) throws SQLException {
+	public synchronized void addToFollowedUsers(User user, User follower) throws SQLException {
 		Long userId = 0L;
 		Long followerId = 0L;
 
@@ -162,7 +220,7 @@ public class UserDao {
 		}
 	}
 
-	public void removeFromFollowedUsers(User user, User follower) throws SQLException {
+	public synchronized void removeFromFollowedUsers(User user, User follower) throws SQLException {
 		Long userId = 0L;
 		Long followerId = 0L;
 
@@ -201,11 +259,25 @@ public class UserDao {
 		}
 	}
 
-	public void editUserProfile(long id) {
-		// TODO implement
+	public synchronized ArrayList<User> getAllUsers() throws SQLException {
+		PreparedStatement ps = connection.prepareStatement(
+				"SELECT first_name,last_name,email,username,register_date,profile_picture,description FROM users;");
+		ResultSet rs = ps.executeQuery();
+		ArrayList<User> users = new ArrayList<>();
+		// do magic here
+		while (rs.next()) {
+			users.add(new User(rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"),
+					rs.getString("username"), rs.getDate("register_date").toLocalDate(),
+					rs.getString("profile_picture"), rs.getString("description")));
+		}
+
+		if (ps != null) {
+			ps.close();
+		}
+		return users;
 	}
 
-	public boolean checkUserPass(String username, String password) throws SQLException {
+	public synchronized boolean checkUserPass(String username, String password) throws SQLException {
 		PreparedStatement ps = null;
 		boolean passMatchUsername = false;
 

@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,9 +16,9 @@ public class User {
 	private String description;
 	private String profilePicture;
 	private LocalDate registerDate;
-	private Set<User> followers;
-	private Set<User> following;
-	// private Set<Album> albumsOfUser;
+	private Set<User> followers = new HashSet<>();;
+	private Set<User> following = new HashSet<>();;
+	private Set<Album> albumsOfUser = new HashSet<>();
 
 	public User(String userName, String firstName, String lastName, String password, String email, String description,
 			String profilePicture) {
@@ -28,8 +29,6 @@ public class User {
 		this.email = email;
 		this.description = description;
 		this.profilePicture = profilePicture;
-		followers = new HashSet<>();
-		following = new HashSet<>();
 	}
 
 	public User(long id, String userName, String firstName, String lastName, String password, String email,
@@ -39,12 +38,15 @@ public class User {
 		this.registerDate = registerDate;
 	}
 
-	public User(String userName, String description, String profilePicture) {
+	public User(String firstName, String lastName, String email, String userName, LocalDate registerDate,
+			String profilePicture, String description) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
 		this.userName = userName;
 		this.description = description;
 		this.profilePicture = profilePicture;
-		followers = new HashSet<>();
-		following = new HashSet<>();
+		this.registerDate = registerDate;
 	}
 
 	public void setId(long id) {
@@ -97,6 +99,14 @@ public class User {
 
 	public long getId() {
 		return id;
+	}
+
+	public void setAlbumsOfUser(Set<Album> albumsOfUser) {
+		this.albumsOfUser = albumsOfUser;
+	}
+
+	public Set<Album> getOrders() {
+		return Collections.unmodifiableSet(albumsOfUser);
 	}
 
 	@Override
