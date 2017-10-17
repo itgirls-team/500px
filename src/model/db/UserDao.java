@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import model.User;
+import utils.CommonUtils;
 
 public class UserDao {
 
@@ -52,7 +53,9 @@ public class UserDao {
 	public synchronized boolean existUser(String userName) throws SQLException {
 		PreparedStatement ps = null;
 		boolean userExists = true;
-
+		if (!CommonUtils.isValidString(userName)) {
+			userExists = false;
+		}
 		ps = connection.prepareStatement("SELECT count(*)>0 FROM users WHERE username=?;");
 		ps.setString(1, userName);
 		ResultSet rs = ps.executeQuery();
@@ -66,8 +69,10 @@ public class UserDao {
 		return userExists;
 	}
 
-	public synchronized void deleteUser(String username) throws SQLException {
-
+	public synchronized String deleteUser(String username) throws SQLException {
+		if (!CommonUtils.isValidString(username)) {
+			return "Invalid username";
+		}
 		PreparedStatement ps = connection.prepareStatement("DELETE FROM users WHERE username=?;");
 		ps.setString(1, username);
 		ps.executeUpdate();
@@ -75,7 +80,7 @@ public class UserDao {
 		if (ps != null) {
 			ps.close();
 		}
-
+		return "User deleted successfully";
 	}
 
 	public synchronized User getUser(String username) throws SQLException {
@@ -192,14 +197,14 @@ public class UserDao {
 			PreparedStatement psUser = null;
 			psUser = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
 			psUser.setString(1, user.getUserName());
-			ResultSet rsUser = ps.executeQuery();
+			ResultSet rsUser = psUser.executeQuery();
 			if (rsUser.next()) {
 				userId = rsUser.getLong(1);
 			}
 			PreparedStatement psFollower = null;
 			psFollower = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
 			psFollower.setString(1, follower.getUserName());
-			ResultSet rsFollower = ps.executeQuery();
+			ResultSet rsFollower = psFollower.executeQuery();
 			if (rsFollower.next()) {
 				followerId = rsFollower.getLong(1);
 			}
@@ -231,14 +236,14 @@ public class UserDao {
 			PreparedStatement psUser = null;
 			psUser = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
 			psUser.setString(1, user.getUserName());
-			ResultSet rsUser = ps.executeQuery();
+			ResultSet rsUser = psUser.executeQuery();
 			if (rsUser.next()) {
 				userId = rsUser.getLong(1);
 			}
 			PreparedStatement psFollower = null;
 			psFollower = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
 			psFollower.setString(1, follower.getUserName());
-			ResultSet rsFollower = ps.executeQuery();
+			ResultSet rsFollower = psFollower.executeQuery();
 			if (rsFollower.next()) {
 				followerId = rsFollower.getLong(1);
 			}
