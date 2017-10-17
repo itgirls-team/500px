@@ -13,10 +13,10 @@ import model.Tag;
 
 public class TagDao {
 
-	public static final String INSERT_POST_TAG = "INSERT INTO post_tag (post_id, tag_id) values (?, ?)";
+	public static final String INSERT_POST_TAG = "INSERT INTO post_tag (post_id, tag_id) VALUES (?, ?)";
 	public static final String SELECT_TAG = "SELECT * FROM tags WHERE title = ?";
 	public static final String SELECT_TITLE_OF_TAG = "SELECT title FROM tags WHERE title = ?";
-	public static final String INSERT_TAG = "INSERT INTO tags (title) values (?)";
+	public static final String INSERT_TAG = "INSERT INTO tags (title) VALUES (?)";
 
 	private static TagDao instance;
 	private static Connection con = DBManager.getInstance().getConnection();
@@ -31,7 +31,8 @@ public class TagDao {
 		return instance;
 	}
 
-	public void insertPostTags(Post p) throws SQLException {
+	// insert into common table
+	public synchronized void insertPostTags(Post p) throws SQLException {
 		Set<Tag> tags = p.getTagsOfPost();
 
 		String insert_into_post_tag = INSERT_POST_TAG;
@@ -47,7 +48,7 @@ public class TagDao {
 	}
 
 	// insertTag
-	public void insertTag(Tag t) throws SQLException {
+	public synchronized void insertTag(Tag t) throws SQLException {
 		if (!existTag(t)) {
 			PreparedStatement ps = con.prepareStatement(INSERT_TAG);
 			ps.setString(1, t.getTitle());
@@ -79,7 +80,7 @@ public class TagDao {
 		// TagDao.getInstance().insertTag(new Tag("angry"));
 		// Tag tag = TagDao.getInstance().getTag("angry");
 		// System.out.println(tag);
-		System.out.println(TagDao.getInstance().existTag(new Tag("angry")));
+		// System.out.println(TagDao.getInstance().existTag(new Tag("angry")));
 	}
 
 }

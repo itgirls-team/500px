@@ -13,14 +13,17 @@ import java.util.Set;
 import model.Album;
 import model.Post;
 import model.Tag;
+import model.User;
 
 public class AlbumDao {
 
-	private static final String UPLOAD_ALBUM = "INSERT INTO albums (category, date_upload, user_id ) VALUES (?,?,?)";
+	private static final String CREATE_ALBUM = "INSERT INTO albums (category, date_upload, user_id ) VALUES (?,?,?)";
 	private static final String SELECT_ALBUMS_BY_USER = "SELECT album_id,category,user_id FROM albums WHERE user_id = ?";
 	private static final String SELECT_TAGS_FROM_POST = "SELECT t.title FROM post_tag AS p JOIN tags AS t USING (tag_id) WHERE p.post_id = ? ";
 	private static final String SELECT_POST_FROM_ALBUM = "SELECT post_id,image,counts_likes,counts_dislikes,description FROM posts WHERE album_id = ?";
-	
+	private static final String DELETE_POSTS_FROM_ALBUM = "DELETE FROM posts WHERE album_id = ?";
+	private static final String DELETE_ALBUM = "DELETE FROM albums WHERE album_id =?";
+
 	private static Connection con = DBManager.getInstance().getConnection();
 	private static AlbumDao instance;
 
@@ -34,10 +37,9 @@ public class AlbumDao {
 		return instance;
 	}
 
-	// uploadAlbum
-	public void uploadAlbum(Album a) throws SQLException {
-		con.setAutoCommit(false);
-		PreparedStatement ps = con.prepareStatement(UPLOAD_ALBUM, Statement.RETURN_GENERATED_KEYS);
+	// createAlbum
+	public synchronized void createAlbum(Album a) throws SQLException {
+		PreparedStatement ps = con.prepareStatement(CREATE_ALBUM, Statement.RETURN_GENERATED_KEYS);
 		ps.setString(1, a.getCategory());
 		ps.setDate(2, Date.valueOf(LocalDate.now()));
 		ps.setLong(3, a.getUser());
@@ -45,22 +47,12 @@ public class AlbumDao {
 		ResultSet rs = ps.getGeneratedKeys();
 		rs.next();
 		a.setId(rs.getLong(1));
-		con.commit();
-		con.setAutoCommit(true);
-	}
-
-	public void uploadAlbum(String category, int user_id) throws SQLException {
-		PreparedStatement ps = con.prepareStatement(UPLOAD_ALBUM, Statement.RETURN_GENERATED_KEYS);
-		ps.setString(1, category);
-		ps.setDate(2, Date.valueOf(LocalDate.now()));
-		ps.setInt(3, user_id);
-		ps.executeUpdate();
 	}
 
 	// getAllAlbumFromUser
-	public HashSet<Album> getAllAlbumFromUser(long user_id) throws SQLException {
+	public HashSet<Album> getAllAlbumFromUser(User u) throws SQLException {
 		PreparedStatement ps = con.prepareStatement(SELECT_ALBUMS_BY_USER);
-		ps.setLong(1, user_id);
+		ps.setLong(1, u.getId());
 		ResultSet rs = ps.executeQuery();
 		HashSet<Album> albums = new HashSet<>();
 		while (rs.next()) {
@@ -77,21 +69,50 @@ public class AlbumDao {
 					tags.add(new Tag(rs2.getString("title")));
 				}
 				posts.add(new Post(rs1.getLong("post_id"), rs1.getString("image"), rs1.getInt("counts_likes"),
-						rs1.getInt("counts_dislikes"), rs1.getString("description"),tags , rs.getInt("album_id")));
+						rs1.getInt("counts_dislikes"), rs1.getString("description"), tags, rs.getInt("album_id")));
 			}
-			albums.add(new Album(rs.getLong("album_id"), rs.getString("category"), rs.getInt("user_id")));
+
+			albums.add(new Album(rs.getLong("album_id"), rs.getString("category"), u.getId()));
 		}
 		return albums;
 	}
-	
+
+	// deleteAlbum
+	public void deleteAlbum(Album a) throws SQLException {
+		PreparedStatement deletePosts = null;
+		PreparedStatement deleteAlbum = null;
+		try {
+			con.setAutoCommit(false);
+			deletePosts = con.prepareStatement(DELETE_POSTS_FROM_ALBUM);
+			deletePosts.setLong(1, a.getId());
+			deletePosts.executeUpdate();
+
+			deleteAlbum = con.prepareStatement(DELETE_ALBUM);
+			deleteAlbum.setLong(1, a.getId());
+			deleteAlbum.executeUpdate();
+			con.commit();
+		} catch (SQLException e) {
+			System.err.print("Transaction is being rolled back");
+			con.rollback();
+		} finally {
+			if (deletePosts != null) {
+				deletePosts.close();
+			}
+			if (deleteAlbum != null) {
+				deleteAlbum.close();
+			}
+			con.setAutoCommit(true);
+		}
+	}
 
 	public static void main(String[] args) throws SQLException {
 		// AlbumDao.getInstance().uploadAlbum(new Album("animals",1));
 		// AlbumDao.getInstance().uploadAlbum("people",1);
-		HashSet<Album> albums = AlbumDao.getInstance().getAllAlbumFromUser(1);
-		for (Album a : albums) {
-			System.out.println(a);
-		}
+		// HashSet<Album> albums =
+		// AlbumDao.getInstance().getAllAlbumFromUser(1);
+		// for (Album a : albums) {
+		// System.out.println(a);
+		// }
 	}
 
 }
