@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashSet;
 import java.util.Set;
 
 import model.Post;
@@ -19,7 +17,7 @@ public class TagDao {
 	public static final String INSERT_TAG = "INSERT INTO tags (title) VALUES (?)";
 
 	private static TagDao instance;
-	private static Connection con = DBManager.getInstance().getConnection();
+	private static Connection con = DbManager.getInstance().getConnection();
 
 	private TagDao() {
 	}

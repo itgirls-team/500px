@@ -7,13 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import model.Album;
 import model.Post;
@@ -40,7 +37,7 @@ public class PostDao {
 	private static final String REMOVE_LIKE_OF_A_POST = "DELETE FROM users_like_posts WHERE  post_id = ? AND user_id = ?";
 
 	private static PostDao instance;
-	private static Connection con = DBManager.getInstance().getConnection();
+	private static Connection con = DbManager.getInstance().getConnection();
 
 	private PostDao() {
 	}
@@ -115,7 +112,7 @@ public class PostDao {
 	public Map<String, Integer> getPostsNumberInAlbum() {
 		Map<String, Integer> albumNumber = new HashMap<String, Integer>();
 		try {
-			Statement st = DBManager.getInstance().getConnection().createStatement();
+			Statement st = DbManager.getInstance().getConnection().createStatement();
 			ResultSet rs = st.executeQuery(SELECT_COUNT_OF_POSTS_IN_ALBUMS);
 			while (rs.next()) {
 				albumNumber.put(rs.getString("category"), rs.getInt("posts"));

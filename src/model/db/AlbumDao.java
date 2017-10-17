@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Set;
 
 import model.Album;
 import model.Post;
@@ -24,7 +23,7 @@ public class AlbumDao {
 	private static final String DELETE_POSTS_FROM_ALBUM = "DELETE FROM posts WHERE album_id = ?";
 	private static final String DELETE_ALBUM = "DELETE FROM albums WHERE album_id =?";
 
-	private static Connection con = DBManager.getInstance().getConnection();
+	private static Connection con = DbManager.getInstance().getConnection();
 	private static AlbumDao instance;
 
 	private AlbumDao() {
