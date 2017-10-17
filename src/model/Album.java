@@ -1,65 +1,65 @@
 package model;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Album {
 
-	private int id;
+	private long id;
 	private String category;
-	private Date dateOfUpload;
-	private User user;
-	private Set<Post> posts;
-	
-	public Album(int id, String category, Date dateOfUpload, User user, Set<Post> posts) {
+	private LocalDate dateOfUpload;
+	private long userId;
+	private Set<Post> posts = new HashSet<Post>();
+
+	public Album(String category, long user) {
+		this.category = category;
+		this.dateOfUpload = LocalDate.now();
+		this.userId = user;
+	}
+
+	public Album(long id, String category, long user) {
+		this(category, user);
 		this.id = id;
-		this.category = category;
-		this.dateOfUpload = dateOfUpload;
-		this.user = user;
-		this.posts = posts;
 	}
-	
-	public Album(String category, Date dateOfUpload, User user, Set<Post> posts) {
-		this.category = category;
-		this.dateOfUpload = dateOfUpload;
-		this.user = user;
-		this.posts = posts;
-	}
-	
-	//Getters
-	
-	public int getId() {
+
+	// Getters
+	public long getId() {
 		return id;
 	}
+
 	public String getCategory() {
 		return category;
 	}
-	public Date getDateOfUpload() {
+
+	public LocalDate getDateOfUpload() {
 		return dateOfUpload;
 	}
-	public User getUser() {
-		return user;
+
+	public long getUser() {
+		return userId;
 	}
+
 	public Set<Post> getPosts() {
 		return Collections.unmodifiableSet(posts);
 	}
-	
-	//Setters
-	
-	public void setId(int id) {
+
+	// Setters
+	public void setId(long id) {
 		this.id = id;
 	}
-	
-	//HashCode and Equals
-	
+
+	// HashCode and Equals
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -73,6 +73,5 @@ public class Album {
 			return false;
 		return true;
 	}
-	
-	
+
 }

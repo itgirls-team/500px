@@ -5,55 +5,39 @@ import java.util.Set;
 
 public class Tag {
 
-	private int id;
+	private long id;
 	private String title;
-	private Set<Post> postsOfTag = new HashSet<Post>();
-	
-	
-	
-	public Tag(int id, String title, Set<Post> postsOfTag) {
-		super();
+
+	public Tag(String title) {
+		this.title = title;
+	}
+
+	public Tag(long id, String title) {
+		this(title);
 		this.id = id;
-		this.title = title;
-		this.postsOfTag = postsOfTag;
 	}
 
-
-	public Tag(String title, Set<Post> postsOfTag) {
-		this.title = title;
-		this.postsOfTag = postsOfTag;
-	}
-
-	//Getters
-	public int getId() {
+	// Getters
+	public long getId() {
 		return id;
 	}
-
 
 	public String getTitle() {
 		return title;
 	}
 
-
-	public Set<Post> getPostsOfTag() {
-		return postsOfTag;
-	}
-
-	//Setters
-	
-	public void setTagId(int id) {
+	// Setters
+	public void setTagId(long id) {
 		this.id = id;
 	}
 
-	//HashCode and Equals
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -68,6 +52,10 @@ public class Tag {
 			return false;
 		return true;
 	}
-	
-		
+
+	@Override
+	public String toString() {
+		return "Tag [title=" + title + "]";
+	}
+
 }
