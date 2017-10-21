@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/logout")
 public class LogoutServlet extends HttpServlet {
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		if (request.getSession().getAttribute("user") != null) {
@@ -19,7 +19,8 @@ public class LogoutServlet extends HttpServlet {
 			request.getSession().setAttribute("logged", false);
 		}
 		request.getSession().invalidate();
-		response.sendRedirect("index.html");
+		request.getRequestDispatcher("index.html").forward(request, response);
+
 	}
 
 }

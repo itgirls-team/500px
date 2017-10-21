@@ -104,77 +104,108 @@ public class CommentDao {
 	}
 
 	public synchronized void removeLikeComment(long commentId, String username) throws SQLException {
-		PreparedStatement ps = con.prepareStatement("DELETE FROM users_like_comments WHERE user_id=? AND comment_id=?");
+		con.setAutoCommit(false);
+		try {
+			PreparedStatement ps = con
+					.prepareStatement("DELETE FROM users_like_comments WHERE user_id=? AND comment_id=?");
 
-		PreparedStatement selectUserId = con.prepareStatement("SELECT user_id FROM userd WHERE username=?;");
-		selectUserId.setString(1, username);
-		ResultSet rs = selectUserId.executeQuery();
-		rs.next();
-		long userId = rs.getLong(1);
+			PreparedStatement selectUserId = con.prepareStatement("SELECT user_id FROM userd WHERE username=?;");
+			selectUserId.setString(1, username);
+			ResultSet rs = selectUserId.executeQuery();
+			rs.next();
+			long userId = rs.getLong(1);
 
-		ps.setLong(1, userId);
-		ps.setLong(2, commentId);
-		ps.executeUpdate();
+			ps.setLong(1, userId);
+			ps.setLong(2, commentId);
+			ps.executeUpdate();
 
-		if (selectUserId != null) {
-			selectUserId.close();
-		}
-		if (rs != null) {
-			rs.close();
-		}
-		if (ps != null) {
-			ps.close();
+			if (selectUserId != null) {
+				selectUserId.close();
+			}
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			con.commit();
+		} catch (SQLException e) {
+			con.rollback();
+			throw new SQLException();
+		} finally {
+			con.setAutoCommit(true);
 		}
 	}
 
 	public synchronized void addDislike(long commentId, String username) throws SQLException {
-		PreparedStatement ps = con
-				.prepareStatement("INSERT INTO users_dislike_comments (user_id, comment_id) VALUES (?,?);");
+		con.setAutoCommit(false);
+		try {
+			PreparedStatement ps = con
+					.prepareStatement("INSERT INTO users_dislike_comments (user_id, comment_id) VALUES (?,?);");
 
-		PreparedStatement selectUserId = con.prepareStatement("SELECT user_id FROM userd WHERE username=?;");
-		selectUserId.setString(1, username);
-		ResultSet rs = selectUserId.executeQuery();
-		rs.next();
-		long userId = rs.getLong(1);
+			PreparedStatement selectUserId = con.prepareStatement("SELECT user_id FROM userd WHERE username=?;");
+			selectUserId.setString(1, username);
+			ResultSet rs = selectUserId.executeQuery();
+			rs.next();
+			long userId = rs.getLong(1);
 
-		ps.setLong(1, userId);
-		ps.setLong(2, commentId);
-		ps.executeUpdate();
+			ps.setLong(1, userId);
+			ps.setLong(2, commentId);
+			ps.executeUpdate();
 
-		if (selectUserId != null) {
-			selectUserId.close();
+			if (selectUserId != null) {
+				selectUserId.close();
+			}
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			con.commit();
+		} catch (
+
+		SQLException e) {
+			con.rollback();
+			throw new SQLException();
+		} finally {
+			con.setAutoCommit(true);
 		}
-		if (rs != null) {
-			rs.close();
-		}
-		if (ps != null) {
-			ps.close();
-		}
-
 	}
 
 	public synchronized void removeDislike(long commentId, String username) throws SQLException {
-		PreparedStatement ps = con
-				.prepareStatement("DELETE FROM users_dislike_comments WHERE user_id=? AND comment_id=?");
+		con.setAutoCommit(false);
+		try {
+			PreparedStatement ps = con
+					.prepareStatement("DELETE FROM users_dislike_comments WHERE user_id=? AND comment_id=?");
 
-		PreparedStatement selectUserId = con.prepareStatement("SELECT user_id FROM userd WHERE username=?;");
-		selectUserId.setString(1, username);
-		ResultSet rs = selectUserId.executeQuery();
-		rs.next();
-		long userId = rs.getLong(1);
+			PreparedStatement selectUserId = con.prepareStatement("SELECT user_id FROM userd WHERE username=?;");
+			selectUserId.setString(1, username);
+			ResultSet rs = selectUserId.executeQuery();
+			rs.next();
+			long userId = rs.getLong(1);
 
-		ps.setLong(1, userId);
-		ps.setLong(2, commentId);
-		ps.executeUpdate();
+			ps.setLong(1, userId);
+			ps.setLong(2, commentId);
+			ps.executeUpdate();
 
-		if (selectUserId != null) {
-			selectUserId.close();
-		}
-		if (rs != null) {
-			rs.close();
-		}
-		if (ps != null) {
-			ps.close();
+			if (selectUserId != null) {
+				selectUserId.close();
+			}
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			con.commit();
+		} catch (
+
+		SQLException e) {
+			con.rollback();
+			throw new SQLException();
+		} finally {
+			con.setAutoCommit(true);
 		}
 	}
 
@@ -192,11 +223,11 @@ public class CommentDao {
 		}
 	}
 
-	public synchronized ArrayList<Comment> getAllComments() throws SQLException {
+	public synchronized ArrayList<Comment> getAllComments(long postId) throws SQLException {
 		ArrayList<Comment> comments = new ArrayList<>();
 		PreparedStatement ps = con.prepareStatement(
-				"SELECT comment_id,user_id, description, date_upload , number_of_likes, number_of_dislikes FROM comments;");
-
+				"SELECT comment_id,user_id, description, date_upload , number_of_likes, number_of_dislikes FROM comments WHERE post_id=?;");
+		ps.setLong(1, postId);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			Comment comment = new Comment(rs.getLong("comment_id"), rs.getLong("user_id"), rs.getString("description"),
@@ -215,54 +246,77 @@ public class CommentDao {
 
 	public synchronized Set<User> getAllCommentUserLikersFromDB(long comment_id) throws SQLException {
 		Set<User> allComentLikers = new HashSet<>();
-		String selectAllComentLikersFromDB = "SELECT user_id FROM users_like_comments WHEN comment_id=?;";
+		con.setAutoCommit(false);
+		try {
+			String selectAllComentLikersFromDB = "SELECT user_id FROM users_like_comments WHEN comment_id=?;";
 
-		PreparedStatement ps = con.prepareStatement(selectAllComentLikersFromDB);
-		ps.setLong(1, comment_id);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next()) {
-			Long userId = rs.getLong("user_id");
+			PreparedStatement ps = con.prepareStatement(selectAllComentLikersFromDB);
+			ps.setLong(1, comment_id);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Long userId = rs.getLong("user_id");
 
-			PreparedStatement psOne = con.prepareStatement("SELECT username FROM users WHERE user_id=?;");
-			psOne.setLong(1, userId);
-			ResultSet rsOne = psOne.executeQuery();
-			rsOne.next();
-			String username = rsOne.getString(1);
+				PreparedStatement psOne = con.prepareStatement("SELECT username FROM users WHERE user_id=?;");
+				psOne.setLong(1, userId);
+				ResultSet rsOne = psOne.executeQuery();
+				rsOne.next();
+				String username = rsOne.getString(1);
 
-			allComentLikers.add(UserDao.getInstance(con).getUser(username));
-		}
-		if (ps != null) {
-			ps.close();
-		}
-		if (rs != null) {
-			rs.close();
+				allComentLikers.add(UserDao.getInstance(con).getUser(username));
+			}
+
+			if (ps != null) {
+				ps.close();
+			}
+			if (rs != null) {
+				rs.close();
+			}
+			con.commit();
+		} catch (
+
+		SQLException e) {
+			con.rollback();
+			throw new SQLException();
+		} finally {
+			con.setAutoCommit(true);
 		}
 		return allComentLikers;
 	}
 
 	public synchronized Set<User> getAllCommentUserDislikersFromDB(long comment_id) throws SQLException {
 		Set<User> allComentDislikers = new HashSet<>();
+
 		String selectAllComentLikersFromDB = "SELECT user_id FROM users_dislike_comments WHEN comment_id=?;";
+		con.setAutoCommit(false);
+		try {
+			PreparedStatement ps = con.prepareStatement(selectAllComentLikersFromDB);
+			ps.setLong(1, comment_id);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Long userId = rs.getLong("user_id");
 
-		PreparedStatement ps = con.prepareStatement(selectAllComentLikersFromDB);
-		ps.setLong(1, comment_id);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next()) {
-			Long userId = rs.getLong("user_id");
+				PreparedStatement psOne = con.prepareStatement("SELECT username FROM users WHERE user_id=?;");
+				psOne.setLong(1, userId);
+				ResultSet rsOne = psOne.executeQuery();
+				rsOne.next();
+				String username = rsOne.getString(1);
 
-			PreparedStatement psOne = con.prepareStatement("SELECT username FROM users WHERE user_id=?;");
-			psOne.setLong(1, userId);
-			ResultSet rsOne = psOne.executeQuery();
-			rsOne.next();
-			String username = rsOne.getString(1);
+				allComentDislikers.add(UserDao.getInstance(con).getUser(username));
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (rs != null) {
+				rs.close();
+			}
+			con.commit();
+		} catch (
 
-			allComentDislikers.add(UserDao.getInstance(con).getUser(username));
-		}
-		if (ps != null) {
-			ps.close();
-		}
-		if (rs != null) {
-			rs.close();
+		SQLException e) {
+			con.rollback();
+			throw new SQLException();
+		} finally {
+			con.setAutoCommit(true);
 		}
 		return allComentDislikers;
 	}

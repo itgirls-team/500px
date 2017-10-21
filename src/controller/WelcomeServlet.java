@@ -18,10 +18,10 @@ public class WelcomeServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		Object obj = session.getAttribute("logged");
 		boolean logged = (obj != null && ((boolean) obj));
-		if (session.isNew() || !logged) {
-			response.sendRedirect("index.html");
+		if (session.isNew() || !logged || request.getSession().getAttribute("user") == null) {
+			request.getRequestDispatcher("index.html").forward(request, response);
 		} else {
-			response.sendRedirect("main.html");
+			request.getRequestDispatcher("main.jsp").forward(request, response);
 		}
 		return;
 	}

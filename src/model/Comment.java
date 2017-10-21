@@ -1,9 +1,6 @@
 package model;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Comment {
 
@@ -14,7 +11,6 @@ public class Comment {
 	private Post post;
 	private int numberOfLikes;
 	private int numberOfDislikes;
-	private HashSet<User> usersLikedTheComment = new HashSet<User>();
 
 	public Comment(User user, String description, Post post) {
 		this.user = user;
@@ -37,11 +33,6 @@ public class Comment {
 		this.dateAndTimeOfUpload = dateAndTimeOfUpload;
 	}
 
-	public Comment(long id, User user, String description, Post post, HashSet<User> usersLikedTheComment) {
-		this(id, user, description, post);
-		this.usersLikedTheComment = usersLikedTheComment;
-	}
-
 	public long getId() {
 		return id;
 	}
@@ -60,10 +51,6 @@ public class Comment {
 
 	public Post getPost() {
 		return post;
-	}
-
-	public Set<User> getUsersLikedTheComment() {
-		return Collections.unmodifiableSet(usersLikedTheComment);
 	}
 
 	public void setId(long id) {
