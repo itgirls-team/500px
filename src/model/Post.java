@@ -14,33 +14,40 @@ public class Post {
 	private LocalDate dateOfUpload;
 	private String description;
 	private long albumId;
-	private Set<Comment> commentsOfPost = new HashSet<>();
-	private Set<User> usersWhoLike = new HashSet<User>();
-	private Set<User> usersWhoDislike = new HashSet<User>();
-	private Set<Tag> tagsOfPost = new HashSet<Tag>();
+	private Set<Comment> commentsOfPost;
+	private Set<User> usersWhoLike;
+	private Set<User> usersWhoDislike;
+	private Set<Tag> tagsOfPost;
 
-	public Post(String path, String description, HashSet<Tag> tags, long album_id) {
+	public Post(String path, String description, int countsOfLikes, int countsOfDislikes,
+			Set<Tag> tags, long album_id ,Set<Comment> commentsOfPost, Set<User> usersWhoLike, Set<User> usersWhoDislike) {
 		this.path = path;
-		this.countsOfLikes = 0;
-		this.countsOfDislikes = 0;
+		this.countsOfLikes = countsOfLikes;
+		this.countsOfDislikes = countsOfDislikes;
 		this.dateOfUpload = LocalDate.now();
 		this.description = description;
 		this.tagsOfPost = tags;
 		this.albumId = album_id;
+		this.commentsOfPost = commentsOfPost;
+		this.usersWhoLike = usersWhoLike;
+		this.usersWhoDislike = usersWhoDislike;
 	}
 
-	public Post(long id, String path, String description, HashSet<Tag> tags, long album_id) {
-		this(path, description, tags, album_id);
+	public Post(long id, String path, String description,int countsOfLikes, int countsOfDislikes,
+			Set<Tag> tags, long album_id, Set<Comment> commentsOfPost, Set<User> usersWhoLike, Set<User> usersWhoDislike) {
+		this(path, description,countsOfLikes,countsOfDislikes, tags, album_id,commentsOfPost,usersWhoLike,usersWhoDislike);
 		this.id = id;
 	}
-
-	public Post(long id, String path, int countsOfLikes, int countsOfDislikes, String description, HashSet<Tag> tags,
-			long album_id) {
-		this(id, path, description, tags, album_id);
-		this.countsOfLikes = countsOfLikes;
-		this.countsOfDislikes = countsOfDislikes;
+	
+	public Post(String path, String description,Set<Tag> tags, long album_id){
+		this(path,description,0,0,tags,album_id, new HashSet<>(), new HashSet<>(), new HashSet<>());
 	}
-
+	
+	public Post(long id,String path, String description,Set<Tag> tags, long album_id){
+		this(path,description,0,0,tags,album_id, new HashSet<>(), new HashSet<>(), new HashSet<>());
+		this.id = id;
+	}
+	
 	// Getters
 	public long getId() {
 		return id;

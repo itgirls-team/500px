@@ -10,19 +10,34 @@ public class Album {
 	private long id;
 	private String category;
 	private LocalDate dateOfUpload;
+	private String picture;
 	private long userId;
-	private Set<Post> posts = new HashSet<Post>();
+	private Set<Post> posts;
 
-	public Album(String category, long user) {
+	@Override
+	public String toString() {
+		return "Album [id=" + id + ", category=" + category + ", dateOfUpload=" + dateOfUpload + ", picture=" + picture
+				+ ", userId=" + userId + ", posts=" + posts + "]";
+	}
+
+	public Album(String category, String picture, long user,Set<Post> posts) {
 		this.category = category;
 		this.dateOfUpload = LocalDate.now();
+		this.picture = picture;
 		this.userId = user;
+		this.posts = posts;
 	}
 
-	public Album(long id, String category, long user) {
-		this(category, user);
+	public Album(long id, String category, String picture, long user,Set<Post> posts ) {
+		this(category, picture, user,posts);
 		this.id = id;
 	}
+	
+	public Album(String category, String picture,long user) {
+		this(category, picture, user, new HashSet<>());
+	}
+	
+
 
 	// Getters
 	public long getId() {
@@ -43,6 +58,10 @@ public class Album {
 
 	public Set<Post> getPosts() {
 		return Collections.unmodifiableSet(posts);
+	}
+	
+	public String getPicture() {
+		return picture;
 	}
 
 	// Setters

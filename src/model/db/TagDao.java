@@ -4,17 +4,22 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashSet;
 import java.util.Set;
 
 import model.Post;
 import model.Tag;
+import model.User;
 
 public class TagDao {
 
-	public static final String INSERT_POST_TAG = "INSERT INTO post_tag (post_id, tag_id) VALUES (?, ?)";
-	public static final String SELECT_TAG = "SELECT * FROM tags WHERE title = ?";
-	public static final String SELECT_TITLE_OF_TAG = "SELECT title FROM tags WHERE title = ?";
-	public static final String INSERT_TAG = "INSERT INTO tags (title) VALUES (?)";
+	private static final String INSERT_POST_TAG = "INSERT INTO post_tag (post_id, tag_id) VALUES (?, ?)";
+	private static final String SELECT_TAG = "SELECT * FROM tags WHERE title = ?";
+	private static final String SELECT_TITLE_OF_TAG = "SELECT title FROM tags WHERE title = ?";
+	private static final String INSERT_TAG = "INSERT INTO tags (title) VALUES (?)";
+	private static final String SELECT_TAGS_FROM_POST = "SELECT t.title FROM post_tag AS p JOIN tags AS t USING (tag_id) WHERE p.post_id = ? ";
+
 
 	private static TagDao instance;
 	private static Connection con = DbManager.getInstance().getConnection();
@@ -72,6 +77,19 @@ public class TagDao {
 			return true;
 		}
 		return false;
+	}
+	
+	// get all tags from post
+	public HashSet<Tag> getAllTagsFromPost(long post_id) throws SQLException {
+		PreparedStatement ps;
+		ps = con.prepareStatement(SELECT_TAGS_FROM_POST);
+		ps.setLong(1, post_id);
+		ResultSet rs = ps.executeQuery();
+		HashSet<Tag> tags = new HashSet<>();
+		while (rs.next()) {
+			tags.add(new Tag(rs.getLong("tag_id"), rs.getString("title")));
+		}
+		return tags;
 	}
 
 	public static void main(String[] args) throws SQLException {
