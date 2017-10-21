@@ -14,19 +14,19 @@
 <jsp:include page="header.jsp"></jsp:include>
 <img id="profilePicture" src="avatar">
 <div class="main">
-	<form  action="description.jsp">
+	<form action="description.jsp">
 				<input type="submit" value="Description">
 	</form>
-	<form  action="contact.jsp">
+	<form action="contact.jsp">
 				<input type="submit" value="Contacts">
 	</form>
-	<form  action="albums.jsp">
+	<form action="albums.jsp">
 				<input type="submit" value="Albums">
 	</form>
 	
 	<input onclick="location.href = 'followers.jsp';" type="submit" value="Followers">
 
-	<form  action="following.jsp">
+	<form action="followers">
 				<input type="submit" value="Following">
 	</form>
 </div>

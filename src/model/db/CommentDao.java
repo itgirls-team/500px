@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -223,8 +222,8 @@ public class CommentDao {
 		}
 	}
 
-	public synchronized ArrayList<Comment> getAllComments(long postId) throws SQLException {
-		ArrayList<Comment> comments = new ArrayList<>();
+	public synchronized Set<Comment> getAllComments(long postId) throws SQLException {
+		Set<Comment> comments = new HashSet<>();
 		PreparedStatement ps = con.prepareStatement(
 				"SELECT comment_id,user_id, description, date_upload , number_of_likes, number_of_dislikes FROM comments WHERE post_id=?;");
 		ps.setLong(1, postId);

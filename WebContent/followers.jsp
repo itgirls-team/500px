@@ -12,11 +12,10 @@
 			<c:redirect url="login.jsp"></c:redirect>
 </c:if>
 <jsp:include page="main.jsp"></jsp:include>
-	<table border="1">
-	<c:set var="followers">UserDao.getInstance(connection).getAllFollowersForUser(${ sessionScope.user.userName})</c:set>
-		<c:forEach items="${followers}" var="follower">
+	<table id="followers-table" border="1">
+		<c:forEach var="follower" items="${ sessionScope.followers }">
 				<tr>
-					<td>${follower.userName }</td>
+					<td>${follower.userName}</td>
 					<td><input type="button" value="Yaa"> </td>
 				</tr>	
 		</c:forEach>

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import model.Album;
 import model.User;
 import utils.CommonUtils;
 
@@ -100,8 +99,9 @@ public class UserDao {
 					rs.getString("username"), rs.getDate("register_date").toLocalDate(),
 					rs.getString("profile_picture"), rs.getString("description"));
 
-			Set<Album> albumsOfUser = AlbumDao.getInstance().getAllAlbumFromUser(user);
-			user.setAlbumsOfUser(albumsOfUser);
+			// Set<Album> albumsOfUser =
+			// AlbumDao.getInstance().getAllAlbumFromUser(user);
+			// user.setAlbumsOfUser(albumsOfUser);
 
 			Set<User> followers = getAllFollowersForUser(username);
 			user.setFollowers(followers);
@@ -179,13 +179,11 @@ public class UserDao {
 	}
 
 	public synchronized Set<User> getAllFollowedForUser(String followerUsername) throws SQLException {
-
-		Set<User> allFollowed = new HashSet();
-
 		if (!CommonUtils.isValidString(followerUsername)) {
 			return null;
 		}
 		connection.setAutoCommit(false);
+		Set<User> allFollowed = new HashSet();
 		try {
 			// take id of the follower
 			PreparedStatement ps = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
