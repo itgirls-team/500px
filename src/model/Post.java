@@ -7,6 +7,14 @@ import java.util.Set;
 
 public class Post {
 
+	@Override
+	public String toString() {
+		return "Post [id=" + id + ", path=" + path + ", countsOfLikes=" + countsOfLikes + ", countsOfDislikes="
+				+ countsOfDislikes + ", dateOfUpload=" + dateOfUpload + ", description=" + description + ", albumId="
+				+ albumId + ", commentsOfPost=" + commentsOfPost + ", usersWhoLike=" + usersWhoLike
+				+ ", usersWhoDislike=" + usersWhoDislike + ", tagsOfPost=" + tagsOfPost + "]";
+	}
+
 	private long id;
 	private String path;
 	private int countsOfLikes;

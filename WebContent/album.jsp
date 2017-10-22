@@ -8,8 +8,10 @@
 <title>Insert title here</title>
 </head>
 <body>
+ 		<h1>Albums</h1>
 		<c:forEach items="${sessionScope.user.albumsOfUser }" var="album">
-			<a href="/posts?albumId="${album.id}>${album.category}</a>
+		<c:out value="album.id"></c:out>
+			<a href="posts?albumId=${album.id}">${album.category}</a>
 		</c:forEach>
 </body>
 </html>

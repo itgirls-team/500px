@@ -40,7 +40,7 @@ public class CommentDao {
 		ps.setDate(1, Date.valueOf(LocalDate.now()));
 		ps.setString(2, comment.getDescription());
 		ps.setLong(3, comment.getPost().getId());
-		ps.setLong(4, comment.getUser().getId());
+		ps.setLong(4, comment.getUser());
 		ps.executeUpdate();
 
 		ResultSet rs = ps.getGeneratedKeys();
@@ -196,7 +196,6 @@ public class CommentDao {
 		ArrayList<Comment> comments = new ArrayList<>();
 		PreparedStatement ps = con.prepareStatement(
 				"SELECT comment_id,user_id, description, date_upload , number_of_likes, number_of_dislikes FROM comments;");
-
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			Comment comment = new Comment(rs.getLong("comment_id"), rs.getLong("user_id"), rs.getString("description"),
@@ -265,5 +264,28 @@ public class CommentDao {
 			rs.close();
 		}
 		return allComentDislikers;
+	}
+	
+	//add get all comments by post id
+	public synchronized Set<Comment> getAllComments(long postId) throws SQLException {
+		Set<Comment> comments = new HashSet<>();
+		PreparedStatement ps = con.prepareStatement(
+				"SELECT comment_id,user_id, description,date_upload,number_of_likes, number_of_dislikes FROM comments WHERE post_id = ?");
+				//"SELECT comment_id,user_id, description, date_upload , number_of_likes, number_of_dislikes FROM comments WHERE post_id = ?;");
+			ps.setLong(1, postId);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			Comment comment = new Comment(rs.getLong("comment_id"), rs.getLong("user_id"), rs.getString("description"),
+					rs.getTimestamp("date_upload").toLocalDateTime(), rs.getInt("number_of_likes"),
+					rs.getInt("number_of_dislikes"));
+			comments.add(comment);
+		}
+		if (ps != null) {
+			ps.close();
+		}
+		if (rs != null) {
+			rs.close();
+		}
+		return comments;
 	}
 }

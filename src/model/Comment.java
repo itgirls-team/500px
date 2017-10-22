@@ -8,28 +8,30 @@ import java.util.Set;
 public class Comment {
 
 	private long id;
-	private User user;
+	private long userId;
 	private String description;
 	private LocalDateTime dateAndTimeOfUpload;
 	private Post post;
 	private int numberOfLikes;
 	private int numberOfDislikes;
-	private HashSet<User> usersLikedTheComment = new HashSet<User>();
+	//private HashSet<User> usersLikedTheComment = new HashSet<User>();
 
-	public Comment(User user, String description, Post post) {
-		this.user = user;
+	public Comment(long user, String description, Post post) {
+		this.userId = user;
 		this.description = description;
 		this.post = post;
+		dateAndTimeOfUpload = LocalDateTime.now();
 	}
 
-	public Comment(long id, User user, String description, Post post) {
+	public Comment(long id, long user, String description, Post post) {
 		this(user, description, post);
 		this.id = id;
 	}
 
 	public Comment(long commentId, long userId, String description, LocalDateTime dateAndTimeOfUpload,
 			int numberOfLikes, int numberOfDislikes) {
-		this.user.setId(userId);
+		//this.user.setId(userId);
+		this.userId = userId;
 		this.id = commentId;
 		this.description = description;
 		this.numberOfLikes = numberOfLikes;
@@ -37,21 +39,29 @@ public class Comment {
 		this.dateAndTimeOfUpload = dateAndTimeOfUpload;
 	}
 
-	public Comment(long id, User user, String description, Post post, HashSet<User> usersLikedTheComment) {
+	/*public Comment(long id, long user, String description, Post post, HashSet<User> usersLikedTheComment) {
 		this(id, user, description, post);
-		this.usersLikedTheComment = usersLikedTheComment;
+		//this.usersLikedTheComment = usersLikedTheComment;
 	}
+	*/
 
 	public long getId() {
 		return id;
 	}
 
-	public User getUser() {
-		return user;
+	public long getUser() {
+		return userId;
 	}
 
 	public String getDescription() {
 		return description;
+	}
+
+	@Override
+	public String toString() {
+		return "Comment [id=" + id + ", userId=" + userId + ", description=" + description + ", dateAndTimeOfUpload="
+				+ dateAndTimeOfUpload + ", post=" + post + ", numberOfLikes=" + numberOfLikes + ", numberOfDislikes="
+				+ numberOfDislikes + ", usersLikedTheComment=" + "]";
 	}
 
 	public LocalDateTime getdateAndTimeOfUpload() {
@@ -61,10 +71,10 @@ public class Comment {
 	public Post getPost() {
 		return post;
 	}
-
+	/*
 	public Set<User> getUsersLikedTheComment() {
 		return Collections.unmodifiableSet(usersLikedTheComment);
-	}
+	}*/
 
 	public void setId(long id) {
 		this.id = id;

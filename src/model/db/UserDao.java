@@ -19,7 +19,6 @@ public class UserDao {
 	private static Connection connection;
 
 	private UserDao() {
-
 	}
 
 	public static synchronized UserDao getInstance(Connection con) {

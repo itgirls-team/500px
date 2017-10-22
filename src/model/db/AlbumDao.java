@@ -21,11 +21,13 @@ public class AlbumDao {
 
 	private static final String CREATE_ALBUM = "INSERT INTO albums (category, date_upload, picture, user_id ) VALUES (?,?,?,?)";
 	private static final String SELECT_ALBUMS_BY_USER = "SELECT album_id, category, picture, user_id FROM albums WHERE user_id = ?";
-	//private static final String SELECT_TAGS_FROM_POST = "SELECT t.title FROM post_tag AS p JOIN tags AS t USING (tag_id) WHERE p.post_id = ? ";
+	// private static final String SELECT_TAGS_FROM_POST = "SELECT t.title FROM
+	// post_tag AS p JOIN tags AS t USING (tag_id) WHERE p.post_id = ? ";
 	private static final String SELECT_POST_FROM_ALBUM = "SELECT post_id, image, counts_likes, counts_dislikes, description FROM posts WHERE album_id = ?";
 	private static final String DELETE_POSTS_FROM_ALBUM = "DELETE FROM posts WHERE album_id = ?";
 	private static final String DELETE_ALBUM = "DELETE FROM albums WHERE album_id =?";
 	private static final String EXISTS_ALBUM = "SELECT count(*)>0 FROM albums WHERE category LIKE ?";
+
 	private static Connection con = DbManager.getInstance().getConnection();
 	private static AlbumDao instance;
 
@@ -59,7 +61,7 @@ public class AlbumDao {
 		ResultSet rs = ps.executeQuery();
 		HashSet<Album> albums = new HashSet<>();
 		while (rs.next()) {
-			HashSet<Post> posts = new HashSet<>();
+			/*HashSet<Post> posts = new HashSet<>();
 			PreparedStatement ps_posts = con.prepareStatement(SELECT_POST_FROM_ALBUM);
 			ps_posts.setLong(1, rs.getLong("album_id"));
 			ResultSet rs1 = ps_posts.executeQuery();
@@ -74,10 +76,10 @@ public class AlbumDao {
 				Set<Comment> commentsOfPost = CommentDao.getInstance().getAllComments(rs.getLong("post_id"));
 				Set<User> usersWhoLike = PostDao.getInstance().getAllUsersWhoLikePost(postId);
 				Set<User> usersWhoDislike = PostDao.getInstance().getAllUsersWhoDislikePost(postId);
-				posts.add(new Post(postId,url,description, countLikes,
-						countDislikes, tags , albumId, commentsOfPost, usersWhoLike,usersWhoDislike));
-			}
-			albums.add(new Album(rs.getLong("album_id"), rs.getString("category"), rs.getString("picture"), userId ,posts));
+				posts.add(new Post(postId, url, description, countLikes, countDislikes, tags, albumId, commentsOfPost,
+						usersWhoLike, usersWhoDislike));
+			}*/
+			albums.add(new Album(rs.getLong("album_id"), rs.getString("category"), rs.getString("picture"), userId));
 		}
 		return albums;
 	}
@@ -130,5 +132,16 @@ public class AlbumDao {
 		return albumExists;
 	}
 
+	public static void main(String[] args) {
 
+		HashSet<Album> albums;
+		try {
+			albums = AlbumDao.getInstance().getAllAlbumFromUser(1);
+			for (Album a : albums) {
+				System.out.println(a);
+			}
+		} catch (SQLException e) {
+			System.out.println("ops");
+		}
+	}
 }

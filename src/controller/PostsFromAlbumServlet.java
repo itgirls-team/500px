@@ -20,8 +20,7 @@ public class PostsFromAlbumServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			Album album = (Album) request.getAttribute("albumId");
-			request.getSession().setAttribute("posts", PostDao.getInstance().getAllPostsFromAlbum(album));
-			System.out.println(PostDao.getInstance().getAllPostsFromAlbum(album));
+			request.getSession().setAttribute("posts", PostDao.getInstance().getAllPostsFromAlbum(album.getId()));
 			request.getRequestDispatcher("posts.jsp").forward(request, response);
 		} catch (SQLException e) {
 			e.printStackTrace();

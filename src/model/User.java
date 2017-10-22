@@ -7,6 +7,14 @@ import java.util.Set;
 
 public class User {
 
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", userName=" + userName + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", password=" + password + ", email=" + email + ", description=" + description + ", profilePicture="
+				+ profilePicture + ", registerDate=" + registerDate + ", followers=" + followers + ", following="
+				+ following + ", albumsOfUser=" + albumsOfUser + "]";
+	}
+
 	private long id;
 	private String userName;
 	private String firstName;

@@ -81,13 +81,12 @@ public class TagDao {
 	
 	// get all tags from post
 	public HashSet<Tag> getAllTagsFromPost(long post_id) throws SQLException {
-		PreparedStatement ps;
-		ps = con.prepareStatement(SELECT_TAGS_FROM_POST);
+		PreparedStatement ps = con.prepareStatement(SELECT_TAGS_FROM_POST);
 		ps.setLong(1, post_id);
 		ResultSet rs = ps.executeQuery();
 		HashSet<Tag> tags = new HashSet<>();
 		while (rs.next()) {
-			tags.add(new Tag(rs.getLong("tag_id"), rs.getString("title")));
+			tags.add(new Tag(rs.getString("title")));
 		}
 		return tags;
 	}
@@ -97,6 +96,12 @@ public class TagDao {
 		// Tag tag = TagDao.getInstance().getTag("angry");
 		// System.out.println(tag);
 		// System.out.println(TagDao.getInstance().existTag(new Tag("angry")));
+	
+			HashSet<Tag> tags = TagDao.getInstance().getAllTagsFromPost(2);
+			for (Tag tag : tags) {
+				System.out.println(tag);
+			}
+		
 	}
 
 }

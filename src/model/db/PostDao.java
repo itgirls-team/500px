@@ -30,8 +30,8 @@ public class PostDao {
 	private static final String DISLIKE_POST = "INSERT INTO users_dislike_posts (post_id,user_id) VALUES (?,?)";
 	private static final String UPDATE_LIKES = "UPDATE posts SET counts_likes = counts_likes + 1  WHERE post_id = ?";
 	private static final String UPDATE_DISLIKES = "UPDATE posts SET counts_dislikes = counts_dislikes + 1  WHERE post_id = ?";
-	private static final String SELECT_USERS_WHO_LIKE_POST = "SELECT username,first_name,last_name,password,email,description,profile_picture,register_date FROM users_like_posts JOIN users  USING (user_id) WHERE post_id = ?";
-	private static final String SELECT_USERS_WHO_DISLIKE_POST = "SELECT username,first_name,last_name,password,email,description,profile_picture,register_date FROM users_like_posts JOIN users  USING (user_id) WHERE post_id = ?";
+	private static final String SELECT_USERS_WHO_LIKE_POST = "SELECT user_id,username,first_name,last_name,password,email,description,profile_picture,register_date FROM users_like_posts JOIN users  USING (user_id) WHERE post_id = ?";
+	private static final String SELECT_USERS_WHO_DISLIKE_POST = "SELECT user_id,username,first_name,last_name,password,email,description,profile_picture,register_date FROM users_dislike_posts JOIN users  USING (user_id) WHERE post_id = ?";
 	private static final String SELECT_POSTS_BY_TAG = "SELECT image, counts_likes, counts_dislikes, description, date_upload, album_id FROM posts JOIN post_tag USING(post_id) JOIN tags USING (tag_id) WHERE title = ?";
 	private static final String SELECT_POSTS_ORDER_BY_LIKES = "SELECT post_id,image,counts_likes,counts_dislikes,description,album_id, SUM(counts_likes) AS likes FROM posts JOIN users_like_posts USING (post_id) GROUP BY post_id ORDER BY SUM(counts_likes) DESC";
 	private static final String SELECT_POSTS_ORDER_BY_DATE = "SELECT * FROM posts ORDER BY date_upload DESC";
@@ -72,28 +72,6 @@ public class PostDao {
 		TagDao.getInstance().insertPostTags(p);
 	}
 
-	// getAllPostFromAlbum
-	public HashSet<Post> getAllPostsFromAlbum(Album album) throws SQLException {
-		PreparedStatement ps = con.prepareStatement(SELECT_POSTS_BY_ALBUM);
-		ps.setLong(1, album.getId());
-		ResultSet rs = ps.executeQuery();
-		HashSet<Post> posts = new HashSet<>();
-		while (rs.next()) {
-			long postId = rs.getLong("post_id");
-			String url = rs.getString("image");
-			String description = rs.getString("description");
-			int countLikes = rs.getInt("counts_likes");
-			int countDislikes = rs.getInt("counts_dislikes");
-			Set<Tag> tags = TagDao.getInstance().getAllTagsFromPost(postId);
-			int albumId = rs.getInt("album_id");
-			Set<Comment> commentsOfPost = CommentDao.getInstance().getAllComments(rs.getLong("post_id"));
-			Set<User> usersWhoLike = this.getAllUsersWhoLikePost(postId);
-			Set<User> usersWhoDislike = this.getAllUsersWhoDislikePost(postId);
-			posts.add(new Post(postId, url, description, countLikes, countDislikes, tags, albumId, commentsOfPost,
-					usersWhoLike, usersWhoDislike));
-		}
-		return posts;
-	}
 
 	// getAllPostFrom“ag - not work
 	public HashSet<Post> getAllPostsFromTag(String tag) throws SQLException {
@@ -181,7 +159,7 @@ public class PostDao {
 		while (rs.next()) {
 			users.add(new User(rs.getLong("user_id"), rs.getString("username"), rs.getString("first_name"),
 					rs.getString("last_name"), rs.getString("password"), rs.getString("email"),
-					rs.getString("description"), rs.getString("profile_picture"), rs.getDate("date").toLocalDate()));
+					rs.getString("description"), rs.getString("profile_picture"), rs.getDate("register_date").toLocalDate()));
 		}
 		return users;
 	}
@@ -195,7 +173,7 @@ public class PostDao {
 		while (rs.next()) {
 			users.add(new User(rs.getLong("user_id"), rs.getString("username"), rs.getString("first_name"),
 					rs.getString("last_name"), rs.getString("password"), rs.getString("email"),
-					rs.getString("description"), rs.getString("profile_picture"), rs.getDate("date").toLocalDate()));
+					rs.getString("description"), rs.getString("profile_picture"), rs.getDate("register_date").toLocalDate()));
 		}
 		return users;
 	}
@@ -296,6 +274,45 @@ public class PostDao {
 			}
 			con.setAutoCommit(true);
 		}
+	}
+
+	// getAllPostFromAlbum
+	public HashSet<Post> getAllPostsFromAlbum(long albumId) throws SQLException {
+		PreparedStatement ps = con.prepareStatement(SELECT_POSTS_BY_ALBUM);
+		ps.setLong(1,albumId);
+		ResultSet rs = ps.executeQuery();
+		HashSet<Post> posts = new HashSet<>();
+		while (rs.next()) {
+			long postId = rs.getLong("post_id");
+			String url = rs.getString("image");
+			String description = rs.getString("description");
+			int countLikes = rs.getInt("counts_likes");
+			int countDislikes = rs.getInt("counts_dislikes");
+			//OK
+			Set<Tag> tags = TagDao.getInstance().getAllTagsFromPost(postId);
+			//OK
+			Set<Comment> commentsOfPost = CommentDao.getInstance().getAllComments(rs.getLong("post_id"));
+			//OK
+			Set<User> usersWhoLike = this.getAllUsersWhoLikePost(postId);
+			//OK
+			Set<User> usersWhoDislike = this.getAllUsersWhoDislikePost(postId);
+		
+			posts.add(new Post(postId, url, description, countLikes, countDislikes, tags, albumId, commentsOfPost,
+					usersWhoLike, usersWhoDislike));
+		}
+		return posts;
+	}
+	
+	public static void main(String[] args) {
+		try {
+			HashSet<Post> posts = PostDao.getInstance().getAllPostsFromAlbum(1);
+			for (Post post : posts) {
+				System.out.println(post);
+			}
+		} catch (SQLException e) {
+			System.out.println("offf");
+		}
+		
 	}
 
 }

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import model.User;
 import model.db.DbManager;
 import model.db.UserDao;
 
@@ -40,7 +41,8 @@ public class LoginServlet extends HttpServlet {
 		try {
 			if (validateLogInData(username, password)) {
 				// login
-				request.setAttribute("user", username);
+				User user = UserDao.getInstance(connection).getUser(username);
+				request.setAttribute("user", user);
 				request.getSession().setAttribute("logged", true);
 				response.sendRedirect("main.html");
 			} else {
