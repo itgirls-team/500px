@@ -18,7 +18,7 @@ import model.db.UserDao;
 /**
  * Servlet implementation class FollowersServlet
  */
-@WebServlet("/FollowersServlet")
+@WebServlet("/followers")
 public class FollowersServlet extends HttpServlet {
 
 	private Connection connection;
@@ -37,52 +37,17 @@ public class FollowersServlet extends HttpServlet {
 		DbManager.getInstance().closeConnection();
 	}
 
-	// @Override
-	// protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-	// throws ServletException, IOException {
-	// String msg = "";
-	// String username = req.getParameter("username");
-	// User user = new User("Veselina", "Stoyanova", "vesi@gmail.com", "vesi",
-	// LocalDate.now(), "some pic", "yaaa");
-	// User follower = new User("Yasen", "Partovski", "yasso@gmail.com",
-	// "yasso", LocalDate.now(), "some pic", "yaaa");
-	// try {
-	// UserDao.getInstance(connection).removeFromFollowedUsers(user, follower);
-	// } catch (SQLException e) {
-	// msg = "User could not be unfollowed.Problem with the DB connection.";
-	// }
-	// resp.getWriter().append(msg);
-	// }
-
-	//
-	// protected void doGet(HttpServletRequest request, HttpServletResponse
-	// response)
-	// throws ServletException, IOException {
-	// String msg = "";
-	// String username = request.getParameter("username");
-	// try {
-	// Set<User> followers =
-	// UserDao.getInstance(connection).getAllFollowersForUser("vesi");
-	// for (User user : followers) {
-	// response.getWriter().append(user.getUserName());
-	// }
-	// } catch (SQLException e) {
-	// msg = "User could not be followed.Problem with the DB connection.";
-	// }
-	// response.getWriter().append(msg);
-	// }
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String msg = "";
-		String username = request.getParameter("username");
+
+		Set<User> followers;
 		try {
-			Set<User> followers = UserDao.getInstance(connection).getAllFollowedForUser("yasso");
-			for (User user : followers) {
-				response.getWriter().append(user.getUserName());
-			}
+			followers = UserDao.getInstance(connection)
+					.getAllFollowersForUser(((User) (request.getSession().getAttribute("user"))).getUserName());
+			request.getSession().setAttribute("followers", followers);
+			response.sendRedirect("followers.jsp");
 		} catch (SQLException e) {
-			msg = "User could not be followed.Problem with the DB connection.";
+			// TODO
 		}
-		response.getWriter().append(msg);
 	}
 }

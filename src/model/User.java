@@ -28,7 +28,7 @@ public class User {
 	private Set<User> following = new HashSet<>();;
 	private Set<Album> albumsOfUser = new HashSet<>();
 
-	public User(String userName, String firstName, String lastName, String password, String email, String description,
+	public User(String userName, String password, String email, String firstName, String lastName, String description,
 			String profilePicture) {
 		this.userName = userName;
 		this.firstName = firstName;
@@ -97,10 +97,6 @@ public class User {
 		this.profilePicture = profilePicture;
 	}
 
-	public LocalDate getRegisterDate() {
-		return registerDate;
-	}
-
 	public void setRegisterDate(LocalDate registerDate) {
 		this.registerDate = registerDate;
 	}
@@ -113,8 +109,24 @@ public class User {
 		this.albumsOfUser = albumsOfUser;
 	}
 
-	public Set<Album> getOrders() {
+	public Set<Album> getAlbumsOfUser() {
 		return Collections.unmodifiableSet(albumsOfUser);
+	}
+
+	public void setFollowers(Set<User> followers) {
+		this.followers = followers;
+	}
+
+	public void setFollowing(Set<User> following) {
+		this.following = following;
+	}
+
+	public Set<User> getFollowers() {
+		return Collections.unmodifiableSet(followers);
+	}
+
+	public Set<User> getFollowing() {
+		return Collections.unmodifiableSet(following);
 	}
 
 	@Override

@@ -55,7 +55,7 @@ public class AlbumDao {
 	}
 
 	// getAllAlbumFromUser
-	public HashSet<Album> getAllAlbumFromUser(long userId) throws SQLException {
+	public Set<Album> getAllAlbumFromUser(long userId) throws SQLException {
 		PreparedStatement ps = con.prepareStatement(SELECT_ALBUMS_BY_USER);
 		ps.setLong(1, userId);
 		ResultSet rs = ps.executeQuery();
@@ -78,8 +78,11 @@ public class AlbumDao {
 				Set<User> usersWhoDislike = PostDao.getInstance().getAllUsersWhoDislikePost(postId);
 				posts.add(new Post(postId, url, description, countLikes, countDislikes, tags, albumId, commentsOfPost,
 						usersWhoLike, usersWhoDislike));
+
 			}*/
 			albums.add(new Album(rs.getLong("album_id"), rs.getString("category"), rs.getString("picture"), userId));
+			//albums.add(new Album(rs.getLong("album_id"), rs.getString("category"), rs.getString("picture"), userId,
+			//		posts));
 		}
 		return albums;
 	}
@@ -132,9 +135,10 @@ public class AlbumDao {
 		return albumExists;
 	}
 
+
 	public static void main(String[] args) {
 
-		HashSet<Album> albums;
+		Set<Album> albums;
 		try {
 			albums = AlbumDao.getInstance().getAllAlbumFromUser(1);
 			for (Album a : albums) {
@@ -144,4 +148,5 @@ public class AlbumDao {
 			System.out.println("ops");
 		}
 	}
+
 }

@@ -8,8 +8,8 @@ public class DbManager {
 
 	private static DbManager instance;
 	private Connection con;
-	
-	private DbManager(){
+
+	private DbManager() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
@@ -22,26 +22,27 @@ public class DbManager {
 		final String DB_USER = "root";
 		final String DB_PASS = "root";
 		try {
-			con = DriverManager.getConnection("jdbc:mysql://" + DB_IP + ":" + DB_PORT + "/" + DB_DBNAME, DB_USER, DB_PASS);
+			con = DriverManager.getConnection("jdbc:mysql://" + DB_IP + ":" + DB_PORT + "/" + DB_DBNAME, DB_USER,
+					DB_PASS);
 		} catch (SQLException e) {
 			System.out.println("Ops");
 		}
-		
+
 	}
-	
-	public static synchronized DbManager getInstance(){
-		if(instance == null){
+
+	public static synchronized DbManager getInstance() {
+		if (instance == null) {
 			instance = new DbManager();
 		}
 		return instance;
 	}
-	
-	public Connection getConnection(){
+
+	public Connection getConnection() {
 		return con;
 	}
-	
-	public void closeConnection(){
-		if(con != null){
+
+	public void closeConnection() {
+		if (con != null) {
 			try {
 				con.close();
 			} catch (SQLException e) {

@@ -42,17 +42,19 @@ public class LoginServlet extends HttpServlet {
 			if (validateLogInData(username, password)) {
 				// login
 				User user = UserDao.getInstance(connection).getUser(username);
-				request.setAttribute("user", user);
+				request.getSession().setAttribute("user", user);
 				request.getSession().setAttribute("logged", true);
-				response.sendRedirect("main.html");
+				response.sendRedirect("main.jsp");
 			} else {
 				// redirect to error page or to login.html again with popup for
 				// error
-				response.getWriter().append("Wrong username or password. Please try again!");
+				request.setAttribute("error", "username or password mismatch!");
+				request.getRequestDispatcher("login.jsp").forward(request, response);
 			}
 		} catch (SQLException e) {
-			System.out.println("Problem with the database. Could not execute query!");
-			response.getWriter().append("Problem with the database. Could not execute query!");
+			System.out.println("problem with the database. Could not execute query!");
+			request.setAttribute("error", "problem with the database. Could not execute query! ");
+			request.getRequestDispatcher("login.jsp").forward(request, response);
 		}
 	}
 
