@@ -8,30 +8,35 @@
 <title>Insert title here</title>
 </head>
 <body>	
-
 			<img src="${sessionScope.post.path}" width="50px" height="auto"/>
-			Description :  ${sessionScope.post.description}
-			Likes : ${sessionScope.post.countsOfLikes}
-			Dislikes : ${sessionScope.post.countsOfDislikes}
-			Date : ${sessionScope.post.dateOfUpload}
+			<h5>Description :  ${sessionScope.post.description} </h5><br>
+			<h5>Likes : ${sessionScope.post.countsOfLikes} </h5><br>
+			<h5>Dislikes : ${sessionScope.post.countsOfDislikes} </h5><br>
+			<h5>Date : ${sessionScope.post.dateOfUpload} </h5><br>
+			<br>
+			<h5>Tags : </h5>
+			<c:forEach items="${sessionScope.post.tagsOfPost}" var="tag">
+					<h6>${tag.title}</h6>
+			</c:forEach>
 			
-			Who like post : 
+			<br>
+			<h5>Who like post : </h5>  <br>
 			<c:forEach items="${sessionScope.post.usersWhoLike}" var="user">
-					<h1>${user.userName}</h1>
+					<h6>${user.userName}</h6> 
 			</c:forEach>
-			
-			<br> Tags :
+			<br>
+			<h5>Who dislike post  : </h5> <br>
 			<c:forEach items="${sessionScope.post.usersWhoDislike}" var="user">
-					${user.userName}
+					<h6> ${user.userName} </h6> 
 			</c:forEach>
-			
-			<br> Comments :
+			<br>
+			<h5> Comments : </h5> <br>
 			<c:forEach items="${sessionScope.post.commentsOfPost}" var="comment">
-				<!-- !!!!Username : ${comment.user.username} -->
-				Description : ${comment.description}
-				Date : ${comment.dateAndTimeOfUpload}
-				Likes : ${comment.numberOfLikes}
-				Dislikes : ${comment.numberOfDislikes}
+				<h6>Username : ${comment.user.userName} </h6> <br>
+				<h6>Description : ${comment.description} </h6> <br>
+				<h6>Date : ${comment.dateAndTimeOfUpload} </h6> <br>
+				<h6>Likes : ${comment.numberOfLikes} </h6> <br>
+				<h6>Dislikes : ${comment. numberOfDislikes} </h6> <br>
 			</c:forEach>
 	
 </body>

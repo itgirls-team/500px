@@ -2,6 +2,8 @@ package model;
 
 import java.time.LocalDateTime;
 
+import model.db.CommentDao;
+
 public class Comment {
 
 	private long id;
@@ -11,8 +13,9 @@ public class Comment {
 	private Post post;
 	private int numberOfLikes;
 	private int numberOfDislikes;
+	private User user = CommentDao.getInstance().getUser(id, userId);
 	//private HashSet<User> usersLikedTheComment = new HashSet<User>();
-
+	
 	public Comment(long user, String description, Post post) {
 		this.userId = user;
 		this.description = description;
@@ -36,7 +39,6 @@ public class Comment {
 		this.dateAndTimeOfUpload = dateAndTimeOfUpload;
 	}
 
-
 	/*public Comment(long id, long user, String description, Post post, HashSet<User> usersLikedTheComment) {
 		this(id, user, description, post);
 		//this.usersLikedTheComment = usersLikedTheComment;
@@ -47,12 +49,16 @@ public class Comment {
 		return id;
 	}
 
-	public long getUser() {
+	public long getUserId() {
 		return userId;
 	}
 
 	public String getDescription() {
 		return description;
+	}
+	
+	public User getUser() {
+		return user;
 	}
 
 	@Override
@@ -70,6 +76,14 @@ public class Comment {
 		return post;
 	}
 
+	public int getNumberOfLikes() {
+		return numberOfLikes;
+	}
+	
+	public int getNumberOfDislikes() {
+		return numberOfDislikes;
+	}
+	
 	/*
 	public Set<User> getUsersLikedTheComment() {
 		return Collections.unmodifiableSet(usersLikedTheComment);
@@ -104,6 +118,12 @@ public class Comment {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+	
+
+	public static void main(String[] args) {
+		User user = CommentDao.getInstance().getUser(4, 2);
+		System.out.println(user);
 	}
 
 }
