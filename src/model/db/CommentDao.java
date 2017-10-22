@@ -130,7 +130,7 @@ public class CommentDao {
 			con.commit();
 		} catch (SQLException e) {
 			con.rollback();
-			throw new SQLException();
+			throw e;
 		} finally {
 			con.setAutoCommit(true);
 		}
@@ -166,7 +166,7 @@ public class CommentDao {
 
 		SQLException e) {
 			con.rollback();
-			throw new SQLException();
+			throw e;
 		} finally {
 			con.setAutoCommit(true);
 		}
@@ -202,7 +202,7 @@ public class CommentDao {
 
 		SQLException e) {
 			con.rollback();
-			throw new SQLException();
+			throw e;
 		} finally {
 			con.setAutoCommit(true);
 		}
@@ -275,7 +275,7 @@ public class CommentDao {
 
 		SQLException e) {
 			con.rollback();
-			throw new SQLException();
+			throw e;
 		} finally {
 			con.setAutoCommit(true);
 		}
@@ -313,7 +313,7 @@ public class CommentDao {
 
 		SQLException e) {
 			con.rollback();
-			throw new SQLException();
+			throw e;
 		} finally {
 			con.setAutoCommit(true);
 		}

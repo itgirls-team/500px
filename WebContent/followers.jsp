@@ -12,13 +12,30 @@
 			<c:redirect url="login.jsp"></c:redirect>
 </c:if>
 <jsp:include page="main.jsp"></jsp:include>
-	<table id="followers-table" border="1">
-		<c:forEach var="follower" items="${ sessionScope.followers }">
+
+<table id="followers-table" border="1">
+			<c:forEach var="entry" items="${sessionScope.isFollowed}">
 				<tr>
-					<td>${follower.userName}</td>
-					<td><input type="button" value="Yaa"> </td>
-				</tr>	
-		</c:forEach>
+					<td><img id="avatar" src="avatar"></td>
+					<td> ${entry.key.userName}</td>	
+					<c:set var="followername" scope="session" value="${entry.key.userName}"/>			
+						<c:if test="${entry.value}">
+								<td>
+										<form action="unfollow" method="post">
+										<input type="hidden" name="followedUserName" value="${followername}" />
+											<input type="submit" value="Unfollow"/> 
+										</form>
+						</c:if>
+						<c:if test="${not entry.value}">
+								<td>
+										<form  action="follow" method="post">
+										<input type="hidden" name="followedUserName" value="${followername}" />
+											<input type="submit" value="Follow"/> 
+										</form>
+								</td>
+						</c:if>
+				</tr>
+			</c:forEach>		
 	</table>
 
 </body>

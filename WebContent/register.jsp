@@ -21,7 +21,7 @@
 	First Name<input type="text" name="firstname"><br>
 	Last Name<input type="text" name="lastname"><br>
 	Email<input type="email" name="email"><br>
-	Description <input type="text" name="description">
+	Description <input type="text" name="description"><br>
 	Avatar<input type="file" name="avatar"><br>
 	<input type="submit" value="Register">
 </form>

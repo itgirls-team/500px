@@ -20,14 +20,16 @@
 	<form action="contact.jsp">
 				<input type="submit" value="Contacts">
 	</form>
-	<form action="albums.jsp">
-				<input type="submit" value="Albums">
+	<form action="albums">
+			<input type="submit" value="Albums">
+	</form>
+
+	<form action="following">
+				<input type="submit" value="Following">
 	</form>
 	
-	<input onclick="location.href = 'followers.jsp';" type="submit" value="Followers">
-
 	<form action="followers">
-				<input type="submit" value="Following">
+				<input type="submit" value="Followers">
 	</form>
 </div>
 				

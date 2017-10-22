@@ -25,7 +25,7 @@ import model.db.UserDao;
 @MultipartConfig
 public class RegisterServlet extends HttpServlet {
 
-	public static final String AVATAR_URL = "/Users/Daskalski/Desktop/uploads/users/";
+	public static final String AVATAR_URL = "C:/pictures/";
 	private static final int MINIMUM_PASSWORD_LENGTH = 7;
 	private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern
 			.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);

@@ -3,9 +3,7 @@ package controller;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,8 +15,8 @@ import model.User;
 import model.db.DbManager;
 import model.db.UserDao;
 
-@WebServlet("/followers")
-public class FollowersServlet extends HttpServlet {
+@WebServlet("/follow")
+public class FollowServlet extends HttpServlet {
 
 	private Connection connection;
 
@@ -36,27 +34,27 @@ public class FollowersServlet extends HttpServlet {
 		DbManager.getInstance().closeConnection();
 	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		boolean userFollowerIsFollowed;
-		Set<User> followers;
-		Map<User, Boolean> userFollowersAreFollowed = new HashMap<User, Boolean>();
+
 		try {
-			followers = UserDao.getInstance(connection)
-					.getAllFollowersForUser(((User) (request.getSession().getAttribute("user"))).getUserName());
-			request.getSession().setAttribute("followers", followers);
-
-			for (User follower : followers) {
-				userFollowerIsFollowed = UserDao.getInstance(connection).userFollowerIsFollowed(
-						((User) (request.getSession().getAttribute("user"))).getUserName(), follower.getUserName());
-				userFollowersAreFollowed.put(follower, userFollowerIsFollowed);
+			String followedUserName = request.getParameter("followedUserName");
+			User loggedUser = (User) (request.getSession().getAttribute("user"));
+			UserDao.getInstance(connection).addToFollowedUsers(followedUserName, loggedUser.getUserName());
+			Map<User, Boolean> followers = (Map<User, Boolean>) request.getSession().getAttribute("isFollowed");
+			for (Map.Entry<User, Boolean> entry : followers.entrySet()) {
+				if (entry.getKey().equals(followedUserName)) {
+					entry.setValue(true);
+				}
+				break;
 			}
-			request.getSession().setAttribute("isFollowed", userFollowersAreFollowed);
-
+			// TODO refresh
 			response.sendRedirect("followers.jsp");
 		} catch (SQLException e) {
 			request.setAttribute("error", "problem with the database. Could not execute query!");
+			e.printStackTrace();
 			return;
 		}
 	}
+
 }

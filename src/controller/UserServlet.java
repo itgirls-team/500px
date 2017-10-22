@@ -13,9 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import model.db.DbManager;
 import model.db.UserDao;
 
-/**
- * Servlet implementation class UserServlet
- */
 @WebServlet("/UserServlet")
 public class UserServlet extends HttpServlet {
 	private Connection connection;

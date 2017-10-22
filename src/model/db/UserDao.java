@@ -171,7 +171,7 @@ public class UserDao {
 			connection.commit();
 		} catch (SQLException e) {
 			connection.rollback();
-			throw new SQLException();
+			throw e;
 		} finally {
 			connection.setAutoCommit(true);
 		}
@@ -230,33 +230,33 @@ public class UserDao {
 			connection.commit();
 		} catch (SQLException e) {
 			connection.rollback();
-			throw new SQLException();
+			throw e;
 		} finally {
 			connection.setAutoCommit(true);
 		}
 		return allFollowed;
 	}
 
-	public synchronized void addToFollowedUsers(User user, User follower) throws SQLException {
+	public synchronized void addToFollowedUsers(String user, String follower) throws SQLException {
 		Long userId = 0L;
 		Long followerId = 0L;
 
 		connection.setAutoCommit(false);
 		try {
-			if (existUser(user.getUserName()) && existUser(follower.getUserName())) {
+			if (existUser(user) && existUser(follower)) {
 				PreparedStatement ps = null;
 				ps = connection.prepareStatement("INSERT INTO user_follower (user_id,follower_id) VALUES (?, ?)");
 
 				PreparedStatement psUser = null;
 				psUser = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
-				psUser.setString(1, user.getUserName());
+				psUser.setString(1, user);
 				ResultSet rsUser = psUser.executeQuery();
 				if (rsUser.next()) {
 					userId = rsUser.getLong(1);
 				}
 				PreparedStatement psFollower = null;
 				psFollower = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
-				psFollower.setString(1, follower.getUserName());
+				psFollower.setString(1, follower);
 				ResultSet rsFollower = psFollower.executeQuery();
 				if (rsFollower.next()) {
 					followerId = rsFollower.getLong(1);
@@ -285,7 +285,7 @@ public class UserDao {
 			connection.commit();
 		} catch (SQLException e) {
 			connection.rollback();
-			throw new SQLException();
+			throw e;
 
 		} finally {
 			connection.setAutoCommit(true);
@@ -293,26 +293,26 @@ public class UserDao {
 
 	}
 
-	public synchronized void removeFromFollowedUsers(User user, User follower) throws SQLException {
+	public synchronized void removeFromFollowedUsers(String user, String follower) throws SQLException {
 		Long userId = 0L;
 		Long followerId = 0L;
 
 		connection.setAutoCommit(false);
 		try {
-			if (existUser(user.getUserName()) && existUser(follower.getUserName())) {
+			if (existUser(user) && existUser(follower)) {
 				PreparedStatement ps = null;
 				ps = connection.prepareStatement("DELETE FROM user_follower WHERE user_id=? AND follower_id=?");
 
 				PreparedStatement psUser = null;
 				psUser = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
-				psUser.setString(1, user.getUserName());
+				psUser.setString(1, user);
 				ResultSet rsUser = psUser.executeQuery();
 				if (rsUser.next()) {
 					userId = rsUser.getLong(1);
 				}
 				PreparedStatement psFollower = null;
 				psFollower = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
-				psFollower.setString(1, follower.getUserName());
+				psFollower.setString(1, follower);
 				ResultSet rsFollower = psFollower.executeQuery();
 				if (rsFollower.next()) {
 					followerId = rsFollower.getLong(1);
@@ -341,7 +341,7 @@ public class UserDao {
 			connection.commit();
 		} catch (SQLException e) {
 			connection.rollback();
-			throw new SQLException();
+			throw e;
 
 		} finally {
 			connection.setAutoCommit(true);
@@ -413,4 +413,71 @@ public class UserDao {
 		return user;
 	}
 
+	public synchronized boolean userFollowerIsFollowed(String username, String followerName) throws SQLException {
+		boolean userFollowerIsFollowed = false;
+		connection.setAutoCommit(false);
+		if (!CommonUtils.isValidString(username) || !CommonUtils.isValidString(followerName)) {
+			return userFollowerIsFollowed = false;
+		}
+		try {
+			if (existUser(username) && existUser(followerName)) {
+				PreparedStatement ps = null;
+				ps = connection
+						.prepareStatement("SELECT count(*)>0 FROM user_follower WHERE follower_id=? AND user_id=?;");
+
+				PreparedStatement psUser = null;
+				long userId = 0;
+				psUser = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
+				psUser.setString(1, username);
+				ResultSet rsUser = psUser.executeQuery();
+				if (rsUser.next()) {
+					userId = rsUser.getLong(1);
+				}
+
+				PreparedStatement psFollower = null;
+				long followerId = 0;
+				psFollower = connection.prepareStatement("SELECT user_id FROM users WHERE username=?;");
+				psFollower.setString(1, followerName);
+				ResultSet rsFollower = psFollower.executeQuery();
+				if (rsFollower.next()) {
+					followerId = rsFollower.getLong(1);
+				}
+				ResultSet rs = null;
+				if (userId != 0L && followerId != 0L) {
+					ps.setLong(1, userId);
+					ps.setLong(2, followerId);
+					rs = ps.executeQuery();
+				}
+				if (rs.next()) {
+					userFollowerIsFollowed = rs.getBoolean(1);
+				}
+				if (ps != null) {
+					ps.close();
+				}
+				if (rs != null) {
+					rs.close();
+				}
+				if (psUser != null) {
+					psUser.close();
+				}
+				if (psFollower != null) {
+					psFollower.close();
+				}
+				if (rsUser != null) {
+					rsUser.close();
+				}
+				if (rsFollower != null) {
+					rsFollower.close();
+				}
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			connection.rollback();
+			throw e;
+
+		} finally {
+			connection.setAutoCommit(true);
+		}
+		return userFollowerIsFollowed;
+	}
 }
