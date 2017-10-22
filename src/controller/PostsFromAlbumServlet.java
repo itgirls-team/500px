@@ -18,13 +18,13 @@ public class PostsFromAlbumServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		long albumId = Long.parseLong(request.getParameter("albumId"));
 		try {
-			Album album = (Album) request.getAttribute("albumId");
-			request.getSession().setAttribute("posts", PostDao.getInstance().getAllPostsFromAlbum(album.getId()));
-			request.getRequestDispatcher("posts.jsp").forward(request, response);
+			request.getSession().setAttribute("posts", PostDao.getInstance().getAllPostsFromAlbum(albumId));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		request.getRequestDispatcher("posts.jsp").forward(request, response);
 	}
 
 }

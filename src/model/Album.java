@@ -39,6 +39,7 @@ public class Album {
 	
 	public Album(long id,String category, String picture,long user) {
 		this(category, picture, user, new HashSet<>());
+		this.id = id;
 	}
 	
 

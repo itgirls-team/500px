@@ -20,7 +20,7 @@
 	<form action="contact.jsp">
 				<input type="submit" value="Contacts">
 	</form>
-	<form action="albums.jsp">
+	<form action="albums">
 				<input type="submit" value="Albums">
 	</form>
 	

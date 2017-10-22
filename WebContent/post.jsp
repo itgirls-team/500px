@@ -7,33 +7,32 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
 </head>
-<body>
-	<c:forEach items="${sessionScope.post}" var="p">
-			
-			Description :  <c:out value="${p.description }"></c:out>
-			Likes : <c:out value="${p.countsOfLikes }"></c:out>
-			Dislikes :  <c:out value="${p.countsOfDislikes }"></c:out>
-			Date :  <c:out value="${p.dateOfUpload }"></c:out>
+<body>	
+
+			<img src="${sessionScope.post.path}" width="50px" height="auto"/>
+			Description :  ${sessionScope.post.description}
+			Likes : ${sessionScope.post.countsOfLikes}
+			Dislikes : ${sessionScope.post.countsOfDislikes}
+			Date : ${sessionScope.post.dateOfUpload}
 			
 			Who like post : 
-			<c:forEach items="${p.usersWhoLike}" var="user">
-				<c:out value="#${user.username }"></c:out>
+			<c:forEach items="${sessionScope.post.usersWhoLike}" var="user">
+					<h1>${user.userName}</h1>
 			</c:forEach>
 			
 			<br> Tags :
-			<c:forEach items="${p.usersWhoDislike}" var="user">
-				<c:out value="#${user.username }"></c:out>
+			<c:forEach items="${sessionScope.post.usersWhoDislike}" var="user">
+					${user.userName}
 			</c:forEach>
 			
 			<br> Comments :
-			<c:forEach items="${p.commentsOfPost}" var="comment">
-				Username : <c:out value="#${comment.user.username }"></c:out>
-				Description : <c:out value="#${comment.description }"></c:out>
-				Date : <c:out value="#${comment.dateAndTimeOfUpload }"></c:out>
-				Likes : <c:out value="#${comment.numberOfLikes }"></c:out>
-				Dislikes :  <c:out value="#${comment.numberOfDislikes }"></c:out>
+			<c:forEach items="${sessionScope.post.commentsOfPost}" var="comment">
+				<!-- !!!!Username : ${comment.user.username} -->
+				Description : ${comment.description}
+				Date : ${comment.dateAndTimeOfUpload}
+				Likes : ${comment.numberOfLikes}
+				Dislikes : ${comment.numberOfDislikes}
 			</c:forEach>
-			
-	</c:forEach>
+	
 </body>
 </html>

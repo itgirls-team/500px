@@ -118,6 +118,7 @@ public class UserDao {
 		return user;
 	}
 
+	
 	public synchronized Set<User> getAllFollowersForUser(String username) throws SQLException {
 
 		Set<User> allFollowers = new HashSet();
@@ -411,5 +412,7 @@ public class UserDao {
 		}
 		return user;
 	}
+	
+
 
 }

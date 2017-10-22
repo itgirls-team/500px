@@ -20,8 +20,9 @@ public class CommentDao {
 	private static final String DELETE_COMMENT = "DELETE FROM comments WHERE comment_id=?";
 	private static final String DELETE_ALL_COMMENTS = "DELETE FROM comments WHERE comment_id = ?";
 	private static final String LIKE_COMMENT = "INSERT INTO users_like_comments (user_id,comment_id) VALUES (?,?)";
-
-	private static Connection con = DbManager.getInstance().getConnection();
+	
+	
+			private static Connection con = DbManager.getInstance().getConnection();
 	private static CommentDao instance;
 
 	private CommentDao() {
@@ -321,4 +322,24 @@ public class CommentDao {
 		}
 		return comments;
 	}
+	/*
+	public User getUser(long commentId,long userId){
+		PreparedStatement ps = con.prepareStatement(
+				"SELECT u.user_id,first_name,last_name,email,username,register_date,profile_picture,u.description FROM comments AS c JOIN users AS u ON (c.user_id = u.user_id) WHERE c.user_id = ? AND c.comment_id = ? ");
+			ps.setLong(1, userId);
+			ps.setLong(2, commentId);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		
+		User user = new User(rs.getLong("user_id"), rs.getString("first_name"), rs.getString("last_name"),
+				rs.getString("email"), rs.getString("username"), rs.getTimestamp("register_date").toLocalDateTime(), rs.getString("profile_picture"),rs.getString("description"));
+		
+		if (ps != null) {
+			ps.close();
+		}
+		if (rs != null) {
+			rs.close();
+		}
+		return user;
+	}*/
 }

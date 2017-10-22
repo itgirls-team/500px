@@ -1,19 +1,12 @@
 package model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Post {
-
-	@Override
-	public String toString() {
-		return "Post [id=" + id + ", path=" + path + ", countsOfLikes=" + countsOfLikes + ", countsOfDislikes="
-				+ countsOfDislikes + ", dateOfUpload=" + dateOfUpload + ", description=" + description + ", albumId="
-				+ albumId + ", commentsOfPost=" + commentsOfPost + ", usersWhoLike=" + usersWhoLike
-				+ ", usersWhoDislike=" + usersWhoDislike + ", tagsOfPost=" + tagsOfPost + "]";
-	}
+public class Post implements Serializable{
 
 	private long id;
 	private String path;
@@ -40,7 +33,20 @@ public class Post {
 		this.usersWhoLike = usersWhoLike;
 		this.usersWhoDislike = usersWhoDislike;
 	}
-
+	
+	public Post(String path, String description, int countsOfLikes, int countsOfDislikes,
+			Set<Tag> tag,Set<Comment> commentsOfPost, Set<User> usersWhoLike, Set<User> usersWhoDislike) {
+		this.path = path;
+		this.countsOfLikes = countsOfLikes;
+		this.countsOfDislikes = countsOfDislikes;
+		this.dateOfUpload = LocalDate.now();
+		this.description = description;
+		this.tagsOfPost = tag;
+		this.commentsOfPost = commentsOfPost;
+		this.usersWhoLike = usersWhoLike;
+		this.usersWhoDislike = usersWhoDislike;
+	}
+	
 	public Post(long id, String path, String description,int countsOfLikes, int countsOfDislikes,
 			Set<Tag> tags, long album_id, Set<Comment> commentsOfPost, Set<User> usersWhoLike, Set<User> usersWhoDislike) {
 		this(path, description,countsOfLikes,countsOfDislikes, tags, album_id,commentsOfPost,usersWhoLike,usersWhoDislike);
@@ -136,5 +142,14 @@ public class Post {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return "Post [id=" + id + ", path=" + path + ", countsOfLikes=" + countsOfLikes + ", countsOfDislikes="
+				+ countsOfDislikes + ", dateOfUpload=" + dateOfUpload + ", description=" + description + ", albumId="
+				+ albumId + ", commentsOfPost=" + commentsOfPost + ", usersWhoLike=" + usersWhoLike
+				+ ", usersWhoDislike=" + usersWhoDislike + ", tagsOfPost=" + tagsOfPost + "]";
+	}
+
 
 }

@@ -23,10 +23,13 @@ public class PostServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
  
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Post post = (Post) request.getAttribute("postId");
-		//request.getSession().setAttribute("tags", post.getTagsOfPost());
-		//request.getSession().setAttribute("comments", post.getCommentsOfPost());
-		request.getRequestDispatcher("post.jsp").forward(request, response);
+		try {
+			long postId = Long.parseLong(request.getParameter("postId"));
+			request.getSession().setAttribute("post", PostDao.getInstance().getPost(postId));
+			request.getRequestDispatcher("post.jsp").forward(request, response);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

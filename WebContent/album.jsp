@@ -9,9 +9,10 @@
 </head>
 <body>
  		<h1>Albums</h1>
-		<c:forEach items="${sessionScope.user.albumsOfUser }" var="album">
-		<c:out value="album.id"></c:out>
-			<a href="posts?albumId=${album.id}">${album.category}</a>
+ 		
+		<c:forEach items="${sessionScope.user.albumsOfUser}"  var="a">		
+			<a href = "posts?albumId=${a.id}">${a.category}</a>
 		</c:forEach>
+		
 </body>
 </html>

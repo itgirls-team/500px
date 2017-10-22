@@ -55,34 +55,38 @@ public class AlbumDao {
 	}
 
 	// getAllAlbumFromUser
-	public Set<Album> getAllAlbumFromUser(long userId) throws SQLException {
+	public HashSet<Album> getAllAlbumFromUser(long userId) throws SQLException {
 		PreparedStatement ps = con.prepareStatement(SELECT_ALBUMS_BY_USER);
 		ps.setLong(1, userId);
 		ResultSet rs = ps.executeQuery();
 		HashSet<Album> albums = new HashSet<>();
 		while (rs.next()) {
-			/*HashSet<Post> posts = new HashSet<>();
-			PreparedStatement ps_posts = con.prepareStatement(SELECT_POST_FROM_ALBUM);
-			ps_posts.setLong(1, rs.getLong("album_id"));
-			ResultSet rs1 = ps_posts.executeQuery();
-			while (rs.next()) {
-				long postId = rs.getLong("post_id");
-				String url = rs.getString("image");
-				String description = rs.getString("description");
-				int countLikes = rs.getInt("counts_likes");
-				int countDislikes = rs.getInt("counts_dislikes");
-				Set<Tag> tags = TagDao.getInstance().getAllTagsFromPost(postId);
-				int albumId = rs.getInt("album_id");
-				Set<Comment> commentsOfPost = CommentDao.getInstance().getAllComments(rs.getLong("post_id"));
-				Set<User> usersWhoLike = PostDao.getInstance().getAllUsersWhoLikePost(postId);
-				Set<User> usersWhoDislike = PostDao.getInstance().getAllUsersWhoDislikePost(postId);
-				posts.add(new Post(postId, url, description, countLikes, countDislikes, tags, albumId, commentsOfPost,
-						usersWhoLike, usersWhoDislike));
-
-			}*/
+			/*
+			 * HashSet<Post> posts = new HashSet<>(); PreparedStatement ps_posts
+			 * = con.prepareStatement(SELECT_POST_FROM_ALBUM);
+			 * ps_posts.setLong(1, rs.getLong("album_id")); ResultSet rs1 =
+			 * ps_posts.executeQuery(); while (rs.next()) { long postId =
+			 * rs.getLong("post_id"); String url = rs.getString("image"); String
+			 * description = rs.getString("description"); int countLikes =
+			 * rs.getInt("counts_likes"); int countDislikes =
+			 * rs.getInt("counts_dislikes"); Set<Tag> tags =
+			 * TagDao.getInstance().getAllTagsFromPost(postId); int albumId =
+			 * rs.getInt("album_id"); Set<Comment> commentsOfPost =
+			 * CommentDao.getInstance().getAllComments(rs.getLong("post_id"));
+			 * Set<User> usersWhoLike =
+			 * PostDao.getInstance().getAllUsersWhoLikePost(postId); Set<User>
+			 * usersWhoDislike =
+			 * PostDao.getInstance().getAllUsersWhoDislikePost(postId);
+			 * posts.add(new Post(postId, url, description, countLikes,
+			 * countDislikes, tags, albumId, commentsOfPost, usersWhoLike,
+			 * usersWhoDislike));
+			 * 
+			 * }
+			 */
+			// albums.add(new Album(rs.getLong("album_id"),
+			// rs.getString("category"), rs.getString("picture"), userId,
+			// posts));
 			albums.add(new Album(rs.getLong("album_id"), rs.getString("category"), rs.getString("picture"), userId));
-			//albums.add(new Album(rs.getLong("album_id"), rs.getString("category"), rs.getString("picture"), userId,
-			//		posts));
 		}
 		return albums;
 	}
@@ -135,6 +139,21 @@ public class AlbumDao {
 		return albumExists;
 	}
 
+	public HashSet<Album> getAllAlbumFromUser(String username) throws SQLException {
+		con.setAutoCommit(false);
+		HashSet<Album> albums = new HashSet();
+		// take id of the user
+		PreparedStatement ps = con.prepareStatement("SELECT user_id FROM users WHERE username = ? ");
+		ps.setString(1, username);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		Long userId = rs.getLong(1);
+
+		albums = AlbumDao.getInstance().getAllAlbumFromUser(userId);
+
+		return albums;
+
+	}
 
 	public static void main(String[] args) {
 

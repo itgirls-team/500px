@@ -40,6 +40,7 @@ public class PostDao {
 	private static final String DELETE_ALL_COMMENTS_FROM_POST = "DELETE FROM comments WHERE post_id = ?";
 	private static final String REMOVE_LIKE_OF_A_POST = "DELETE FROM users_like_posts WHERE  post_id = ? AND user_id = ?";
 	private static final String SELECT_TAGS_FROM_POST = "SELECT t.title FROM post_tag AS p JOIN tags AS t USING (tag_id) WHERE p.post_id = ? ";
+	private static final String SELECT_POSTS_BY_POST_ID = "SELECT post_id,image,counts_likes,counts_dislikes,date_upload,description,album_id FROM posts WHERE post_id = ? ";
 
 	private static PostDao instance;
 	private static Connection con = DbManager.getInstance().getConnection();
@@ -71,7 +72,6 @@ public class PostDao {
 
 		TagDao.getInstance().insertPostTags(p);
 	}
-
 
 	// getAllPostFrom“ag - not work
 	public HashSet<Post> getAllPostsFromTag(String tag) throws SQLException {
@@ -159,7 +159,8 @@ public class PostDao {
 		while (rs.next()) {
 			users.add(new User(rs.getLong("user_id"), rs.getString("username"), rs.getString("first_name"),
 					rs.getString("last_name"), rs.getString("password"), rs.getString("email"),
-					rs.getString("description"), rs.getString("profile_picture"), rs.getDate("register_date").toLocalDate()));
+					rs.getString("description"), rs.getString("profile_picture"),
+					rs.getDate("register_date").toLocalDate()));
 		}
 		return users;
 	}
@@ -173,7 +174,8 @@ public class PostDao {
 		while (rs.next()) {
 			users.add(new User(rs.getLong("user_id"), rs.getString("username"), rs.getString("first_name"),
 					rs.getString("last_name"), rs.getString("password"), rs.getString("email"),
-					rs.getString("description"), rs.getString("profile_picture"), rs.getDate("register_date").toLocalDate()));
+					rs.getString("description"), rs.getString("profile_picture"),
+					rs.getDate("register_date").toLocalDate()));
 		}
 		return users;
 	}
@@ -279,7 +281,7 @@ public class PostDao {
 	// getAllPostFromAlbum
 	public HashSet<Post> getAllPostsFromAlbum(long albumId) throws SQLException {
 		PreparedStatement ps = con.prepareStatement(SELECT_POSTS_BY_ALBUM);
-		ps.setLong(1,albumId);
+		ps.setLong(1, albumId);
 		ResultSet rs = ps.executeQuery();
 		HashSet<Post> posts = new HashSet<>();
 		while (rs.next()) {
@@ -288,21 +290,45 @@ public class PostDao {
 			String description = rs.getString("description");
 			int countLikes = rs.getInt("counts_likes");
 			int countDislikes = rs.getInt("counts_dislikes");
-			//OK
+			// OK
 			Set<Tag> tags = TagDao.getInstance().getAllTagsFromPost(postId);
-			//OK
+			// OK
 			Set<Comment> commentsOfPost = CommentDao.getInstance().getAllComments(rs.getLong("post_id"));
-			//OK
+			// OK
 			Set<User> usersWhoLike = this.getAllUsersWhoLikePost(postId);
-			//OK
+			// OK
 			Set<User> usersWhoDislike = this.getAllUsersWhoDislikePost(postId);
-		
+
 			posts.add(new Post(postId, url, description, countLikes, countDislikes, tags, albumId, commentsOfPost,
 					usersWhoLike, usersWhoDislike));
 		}
 		return posts;
 	}
-	
+
+	public Post getPost(long postId) throws SQLException {
+		PreparedStatement ps = con.prepareStatement(SELECT_POSTS_BY_POST_ID);
+		ps.setLong(1, postId);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		String url = rs.getString("image");
+		String description = rs.getString("description");
+		int countLikes = rs.getInt("counts_likes");
+		int countDislikes = rs.getInt("counts_dislikes");
+		// OK
+		Set<Tag> tags = TagDao.getInstance().getAllTagsFromPost(postId);
+		// OK
+		Set<Comment> commentsOfPost = CommentDao.getInstance().getAllComments(rs.getLong("post_id"));
+		// OK
+		Set<User> usersWhoLike = this.getAllUsersWhoLikePost(postId);
+		// OK
+		Set<User> usersWhoDislike = this.getAllUsersWhoDislikePost(postId);
+
+		Post post = new Post(url, description, countLikes, countDislikes,
+				 tags,commentsOfPost,usersWhoLike,usersWhoDislike);
+
+		return post;
+	}
+
 	public static void main(String[] args) {
 		try {
 			HashSet<Post> posts = PostDao.getInstance().getAllPostsFromAlbum(1);
@@ -312,7 +338,7 @@ public class PostDao {
 		} catch (SQLException e) {
 			System.out.println("offf");
 		}
-		
+
 	}
 
 }

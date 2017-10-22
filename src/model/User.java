@@ -7,14 +7,6 @@ import java.util.Set;
 
 public class User {
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", userName=" + userName + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", password=" + password + ", email=" + email + ", description=" + description + ", profilePicture="
-				+ profilePicture + ", registerDate=" + registerDate + ", followers=" + followers + ", following="
-				+ following + ", albumsOfUser=" + albumsOfUser + "]";
-	}
-
 	private long id;
 	private String userName;
 	private String firstName;
@@ -38,11 +30,23 @@ public class User {
 		this.description = description;
 		this.profilePicture = profilePicture;
 	}
-
+	
 	public User(long id, String userName, String firstName, String lastName, String password, String email,
 			String description, String profilePicture, LocalDate registerDate) {
 		this(userName, firstName, lastName, password, email, description, profilePicture);
 		this.id = id;
+		this.registerDate = registerDate;
+	}
+	
+	public User(long id, String userName, String firstName, String lastName, String email,
+			String description, String profilePicture, LocalDate registerDate) {
+		this.id = id;
+		this.userName = userName;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.description = description;
+		this.profilePicture = profilePicture;
 		this.registerDate = registerDate;
 	}
 
@@ -105,7 +109,7 @@ public class User {
 		return id;
 	}
 
-	public void setAlbumsOfUser(Set<Album> albumsOfUser) {
+	public void setAlbumsOfUser(HashSet<Album> albumsOfUser) {
 		this.albumsOfUser = albumsOfUser;
 	}
 
@@ -155,5 +159,13 @@ public class User {
 		} else if (!userName.equals(other.userName))
 			return false;
 		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", userName=" + userName + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", password=" + password + ", email=" + email + ", description=" + description + ", profilePicture="
+				+ profilePicture + ", registerDate=" + registerDate + ", followers=" + followers + ", following="
+				+ following + ", albumsOfUser=" + albumsOfUser + "]";
 	}
 }
