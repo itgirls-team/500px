@@ -77,7 +77,6 @@ public class RegisterServlet extends HttpServlet {
 
 		// Registration of user
 		if (validationMessage.equals(REG_SUCC_MSG)) {
-			// TODO add profile picture
 			try {
 				UserDao.getInstance(connection).insertUser(userName, password, email, firstName, lastName, description,
 						avatarUrl);

@@ -15,8 +15,8 @@ import model.User;
 import model.db.DbManager;
 import model.db.UserDao;
 
-@WebServlet("/follow")
-public class FollowServlet extends HttpServlet {
+@WebServlet("/unfollow")
+public class UnfollowServlet extends HttpServlet {
 
 	private Connection connection;
 
@@ -41,11 +41,11 @@ public class FollowServlet extends HttpServlet {
 			String followedUserName = request.getParameter("followedUserName");
 			String pageToRedirect = (String) request.getSession().getAttribute("pageToRedirect");
 			User loggedUser = (User) (request.getSession().getAttribute("user"));
-			UserDao.getInstance(connection).addToFollowedUsers(followedUserName, loggedUser.getUserName());
+			UserDao.getInstance(connection).removeFromFollowedUsers(followedUserName, loggedUser.getUserName());
 			Map<User, Boolean> followers = (Map<User, Boolean>) request.getSession().getAttribute("isFollowed");
 			for (Map.Entry<User, Boolean> entry : followers.entrySet()) {
 				if (entry.getKey().getUserName().equals(followedUserName)) {
-					entry.setValue(true);
+					entry.setValue(false);
 					break;
 				}
 			}

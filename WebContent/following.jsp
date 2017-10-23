@@ -13,8 +13,8 @@
 </c:if>
 <jsp:include page="main.jsp"></jsp:include>
 
-<c:if test="${!sessionScope.noFollowers}">
-<table id="followers-table" border="1">
+<c:if test="${!sessionScope.noFollowed}">
+<table id="following-table" border="1">
 			<c:forEach var="entry" items="${sessionScope.isFollowed}">
 				<tr>
 					<td><img id="avatar" src="avatar"></td>
@@ -30,7 +30,7 @@
 						<c:if test="${not entry.value}">
 								<td>
 										<form  action="follow" method="post">
-										<input type="hidden" name="followedUserName" value="${followername}" />		
+										<input type="hidden" name="followedUserName" value="${followername}" />
 											<input type="submit" value="Follow"/> 
 										</form>
 								</td>
@@ -39,8 +39,8 @@
 			</c:forEach>		
 	</table>
 </c:if>
-<c:if test="${sessionScope.noFollowers}">
-			<p>You have no followers!</p>
+<c:if test="${sessionScope.noFollowed}">
+		<p>You're not following anyone!</p>
 </c:if>
 </body>
 </html>

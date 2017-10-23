@@ -25,10 +25,12 @@
 	</form>
 
 	<form action="following">
+				<input type="hidden" name="pageToRedirect" value="following.jsp" /> 	
 				<input type="submit" value="Following">
 	</form>
 	
 	<form action="followers">
+				<input type="hidden" name="pageToRedirect" value="followers.jsp" />	
 				<input type="submit" value="Followers">
 	</form>
 </div>

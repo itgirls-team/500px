@@ -17,8 +17,8 @@ import model.User;
 import model.db.DbManager;
 import model.db.UserDao;
 
-@WebServlet("/followers")
-public class FollowersServlet extends HttpServlet {
+@WebServlet("/following")
+public class FollowingServlet extends HttpServlet {
 
 	private Connection connection;
 
@@ -40,24 +40,22 @@ public class FollowersServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String pageToRedirect = request.getParameter("pageToRedirect");
 		request.getSession().setAttribute("pageToRedirect", pageToRedirect);
-		boolean userFollowerIsFollowed;
-		Set<User> followers;
-		Map<User, Boolean> userFollowersAreFollowed = new HashMap<User, Boolean>();
+		boolean followedUserIsFollowed = true;
+		Set<User> followed;
+		Map<User, Boolean> followedUsersAreFollowed = new HashMap<User, Boolean>();
 		try {
-			followers = UserDao.getInstance(connection)
-					.getAllFollowersForUser(((User) (request.getSession().getAttribute("user"))).getUserName());
-			request.getSession().setAttribute("followers", followers);
+			followed = UserDao.getInstance(connection)
+					.getAllFollowedForUser(((User) (request.getSession().getAttribute("user"))).getUserName());
+			request.getSession().setAttribute("followed", followed);
 
-			for (User follower : followers) {
-				userFollowerIsFollowed = UserDao.getInstance(connection).userFollowerIsFollowed(
-						((User) (request.getSession().getAttribute("user"))).getUserName(), follower.getUserName());
-				userFollowersAreFollowed.put(follower, userFollowerIsFollowed);
+			for (User followedUser : followed) {
+				followedUsersAreFollowed.put(followedUser, followedUserIsFollowed);
 			}
-			request.getSession().setAttribute("isFollowed", userFollowersAreFollowed);
-			if (userFollowersAreFollowed.isEmpty()) {
-				request.getSession().setAttribute("noFollowers", true);
+			request.getSession().setAttribute("isFollowed", followedUsersAreFollowed);
+			if (followedUsersAreFollowed.isEmpty()) {
+				request.getSession().setAttribute("noFollowed", true);
 			}
-			response.sendRedirect("followers.jsp");
+			response.sendRedirect("following.jsp");
 		} catch (SQLException e) {
 			request.setAttribute("error", "problem with the database. Could not execute query!");
 			return;
