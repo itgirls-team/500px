@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -8,15 +7,11 @@
 <title>Insert title here</title>
 </head>
 <body>
- 		<h1>Albums</h1>
- 		
-		<c:forEach items="${sessionScope.user.albumsOfUser}"  var="a">		
-			<a href = "posts?albumId=${a.id}">${a.category}</a>
-		</c:forEach>
-			
-		<form action="createAlbum.jsp" method="post">
-				<input type="submit" value="Create album">
-		</form>
-		
+	<form action="CreateAlbum" method="post" enctype="multipart/form-data">
+			Category<input type="text" name="category"><br>
+			Image<input type="file" name="picture"><br>
+			<input type="submit" value="Upload post"><br>
+	</form>
+	
 </body>
 </html>

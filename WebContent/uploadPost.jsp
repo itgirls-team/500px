@@ -13,9 +13,7 @@
 			Tags<input type="text" name="tags"><br>
 			Image<input type="file" name="image"><br>
 			<input type="submit" value="Upload post"><br>
-			
 		</form>
-	
 	
 	</body>
 </html>

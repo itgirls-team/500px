@@ -14,5 +14,9 @@
 		<a href="post?postId=${post.id}">${post.path}</a>
 	</c:forEach>
 	
+	<form action="uploadPost.jsp" method="post">
+				<input type="submit" value="Upload Post">
+		</form>
+	
 </body>
 </html>

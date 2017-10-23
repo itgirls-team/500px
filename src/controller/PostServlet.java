@@ -15,7 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import model.Album;
 import model.Post;
+import model.User;
+import model.db.AlbumDao;
 import model.db.PostDao;
+import model.db.UserDao;
 
 
 @WebServlet("/post")

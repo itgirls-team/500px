@@ -32,7 +32,7 @@
 			<br>
 			<h5> Comments : </h5> <br>
 			<c:forEach items="${sessionScope.post.commentsOfPost}" var="comment">
-				<h6>Username : ${comment.user.userName} </h6> <br>
+				<h6>Username : ${comment.user.id} </h6> <br>
 				<h6>Description : ${comment.description} </h6> <br>
 				<h6>Date : ${comment.dateAndTimeOfUpload} </h6> <br>
 				<h6>Likes : ${comment.numberOfLikes} </h6> <br>

@@ -14,12 +14,6 @@ public class Album {
 	private long userId;
 	private Set<Post> posts;
 
-	@Override
-	public String toString() {
-		return "Album [id=" + id + ", category=" + category + ", dateOfUpload=" + dateOfUpload + ", picture=" + picture
-				+ ", userId=" + userId + ", posts=" + posts + "]";
-	}
-
 	public Album(String category, String picture, long user,Set<Post> posts) {
 		this.category = category;
 		this.dateOfUpload = LocalDate.now();
@@ -28,6 +22,12 @@ public class Album {
 		this.posts = posts;
 	}
 
+	public Album(String category, String picture) {
+		this.category = category;
+		this.dateOfUpload = LocalDate.now();
+		this.picture = picture;
+	}
+	
 	public Album(long id, String category, String picture, long user,Set<Post> posts ) {
 		this(category, picture, user,posts);
 		this.id = id;
@@ -96,5 +96,12 @@ public class Album {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return "Album [id=" + id + ", category=" + category + ", dateOfUpload=" + dateOfUpload + ", picture=" + picture
+				+ ", userId=" + userId + ", posts=" + posts + "]";
+	}
+
 
 }

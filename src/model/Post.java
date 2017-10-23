@@ -57,6 +57,10 @@ public class Post implements Serializable{
 		this(path,description,0,0,tags,album_id, new HashSet<>(), new HashSet<>(), new HashSet<>());
 	}
 	
+	public Post(String path, String description,Set<Tag> tags){
+		this(path,description,0,0,tags,new HashSet<>(), new HashSet<>(), new HashSet<>());
+	}
+	
 	public Post(long id,String path, String description,Set<Tag> tags, long album_id){
 		this(path,description,0,0,tags,album_id, new HashSet<>(), new HashSet<>(), new HashSet<>());
 		this.id = id;
